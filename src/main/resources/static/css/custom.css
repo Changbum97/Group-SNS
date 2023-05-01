@@ -1,0 +1,37 @@
+.navbar-brand {
+    color: whitesmoke;
+    font-weight: bold;
+    font-size: x-large;
+}
+
+.nav-btn {
+    background-color: whitesmoke;
+    font-weight: bold;
+    border: none;
+    height: 40px;
+    width: 100px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.nav-btn:hover, .nav-btn:focus, .nav-btn:active:focus {
+    background-color: navajowhite;
+    animation: jelly 0.5s;
+}
+
+
+
+
+@keyframes jelly {
+    25% {
+        transform: scale(0.9, 1.1);
+    }
+
+    50% {
+        transform: scale(1.1, 0.9);
+    }
+
+    75% {
+        transform: scale(0.95, 1.05);
+    }
+}
