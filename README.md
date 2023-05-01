@@ -1,5 +1,9 @@
 # SNS Shopping Mall 프로젝트
 
+## 배포 사이트
+
+http://ec2-52-79-82-151.ap-northeast-2.compute.amazonaws.com:8085/
+
 ## 개발 환경
 
 - Language: JAVA 11
