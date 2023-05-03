@@ -1,4 +1,4 @@
-# Group Sns
+# Group SNS
 
 ## 배포 사이트
 
