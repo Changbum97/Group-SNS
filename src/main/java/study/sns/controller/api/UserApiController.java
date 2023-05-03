@@ -16,15 +16,27 @@ public class UserApiController {
     private final UserService userService;
 
     @PostMapping("/join")
-    public Response<?> join(@RequestBody UserJoinRequest req) {
+    public Response<?> join(UserJoinRequest req) {
         UserDto dto = userService.saveUser(req);
         return Response.success(dto);
     }
 
     @PostMapping("/login")
-    public Response<?> login(@RequestBody UserLoginRequest req) {
+    public Response<?> login(UserLoginRequest req) {
         String jwtToken = userService.login(req);
         return Response.success(jwtToken);
+    }
+
+    @GetMapping("/check-loginId")
+    public Response<?> checkLoginId(@RequestParam String loginId) {
+        Boolean pass = userService.checkLoginId(loginId);
+        return Response.success(pass);
+    }
+
+    @GetMapping("/check-nickname")
+    public Response<?> checkNickname(@RequestParam String nickname) {
+        Boolean pass = userService.checkNickname(nickname);
+        return Response.success(pass);
     }
 
 }

@@ -54,6 +54,65 @@ html, body {
     filter: brightness(70%);
 }
 
+.user-btn {
+    height: 40px;
+    width: 40%;
+    font-size: large;
+    font-weight: bold;
+    margin-bottom: 15px;
+    margin-top: 25px;
+    background-color: whitesmoke;
+    color: #333333;
+    border: none;
+}
+
+.user-btn:hover {
+    color: #333333;
+    background-color: whitesmoke;
+    border: none;
+    animation: jelly 0.5s;
+}
+
+.user-btn:active:focus {
+    color: #333333;
+    background-color: whitesmoke;
+    border: none;
+    filter: brightness(70%);
+}
+
+.user-btn:disabled {
+    color: #333333;
+    background-color: whitesmoke;
+    border: none;
+}
+
+.user-form {;
+    width: max-content;
+    height: max-content;
+    background-color: #333333;
+    border: solid 1px black;
+    border-radius: 30px;
+    padding: 50px 50px 30px 50px;
+    color: whitesmoke;
+
+}
+
+.user-form>div>label {
+    font-weight: bold;
+}
+
+.user-form>div>input {
+    width: 300px;
+}
+
+.user-div-pass {
+    color: limegreen;
+}
+
+.user-div-fail {
+    color: orangered;
+}
+
 @keyframes jelly {
     25% {
         transform: scale(0.9, 1.1);

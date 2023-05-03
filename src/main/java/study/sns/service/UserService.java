@@ -27,6 +27,10 @@ public class UserService {
     private String secretKey;
 
     public UserDto saveUser(UserJoinRequest req) {
+        if (!checkLoginId(req.getLoginId()) || !checkNickname(req.getNickname())) {
+            throw new AppException(ErrorCode.BAD_REQUEST);
+        }
+
         User savedUser = userRepository.save( req.toEntity(encoder.encode(req.getPassword()), UserRole.USER) );
         return UserDto.of(savedUser);
     }
@@ -42,5 +46,13 @@ public class UserService {
         // JWT Token 발급
         String jwtToken = JwtTokenUtil.createToken(user.getLoginId(), secretKey, expireTimeMs);
         return jwtToken;
+    }
+
+    public Boolean checkLoginId(String loginId) {
+        return !userRepository.existsByLoginId(loginId);
+    }
+
+    public Boolean checkNickname(String nickname) {
+        return !userRepository.existsByNickname(nickname);
     }
 }

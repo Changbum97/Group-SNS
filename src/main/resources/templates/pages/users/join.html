@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"/>
+<body>
+    <div class="row" style="height: 100%">
+        <div th:replace="fragments/header.html :: side-bar" />
+        <div class="col-10" style="display: flex; justify-content: center; align-items: center;">
+            <form class="form-group user-form" th:object="${userJoinRequest}" id="userJoinRequest" align="left">
+                <div>
+                    <label th:for="loginId">아이디</label><br/>
+                    <input type="text" th:field="*{loginId}" oninput="check_loginId()"
+                           placeholder="사용할 아이디를 입력해주세요."/>
+                    <div id="loginIdPass" class="user-div-pass" hidden>사용 가능한 아이디입니다.</div>
+                    <div id="loginIdFail" class="user-div-fail" hidden></div>
+                </div>
+                <br/>
+                <div>
+                    <label th:for="password">비밀번호</label><br/>
+                    <input type="password" th:field="*{password}" placeholder="사용할 비밀번호를 입력해주세요."/>
+                </div>
+                <br/>
+                <div>
+                    <label th:for="passwordCheck">비밀번호 체크</label><br/>
+                    <input type="password" id="passwordCheck" oninput="check_passwordCheck()"
+                           placeholder="비밀번호를 한 번 더 입력해주세요."/>
+                    <div id="passwordCheckPass" class="user-div-pass" hidden>비밀번호가 서로 일치합니다.</div>
+                    <div id="passwordCheckFail" class="user-div-fail" hidden>비밀번호가 서로 일치하지 않습니다.</div>
+                </div>
+                <br/>
+                <div>
+                    <label th:for="nickname">닉네임</label><br/>
+                    <input type="text" th:field="*{nickname}" oninput="check_nickname()"
+                           placeholder="사용할 닉네임을 입력해주세요."/>
+                    <div id="nicknamePass" class="user-div-pass" hidden>사용 가능한 닉네임입니다.</div>
+                    <div id="nicknameFail" class="user-div-fail" hidden></div>
+                </div>
+                <br/>
+                <div align="center">
+                    <button id="joinBtn" class="btn user-btn" type="button" onclick="join()" disabled>회원가입</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+<script th:inline="javascript">
+    let loginIdPass, passwordCheckPass, nicknamePass = false
+
+    function join() {
+        $.ajax({
+            type: 'POST',
+            url: '/api/users/join',
+            data: $('#userJoinRequest').serialize(),
+            success: function (res) {
+                alert('회원가입에 성공했습니다.\n로그인 후 사용가능합니다')
+                location.href='/users/login'
+            },
+        })
+    }
+
+    function check_all() {
+        if (loginIdPass && passwordCheckPass && nicknamePass) {
+            document.getElementById('joinBtn').removeAttribute("disabled")
+        }
+    }
+
+    function check_loginId() {
+        let inputLoginId = $("#loginId").val()
+        loginIdPass = false
+
+        document.getElementById('loginIdPass').setAttribute("hidden", "true")
+        document.getElementById('loginIdFail').setAttribute("hidden", "true")
+        document.getElementById('joinBtn').setAttribute("disabled", "true")
+
+        // 한글, 특수문자, 공백 체크
+        if (/[!?@#$%^&*():;+\-=~{}<>\_\[\]\|\\\"\'\,\.\/\`\₩]/g.test(inputLoginId)) {
+            document.getElementById('loginIdFail').removeAttribute("hidden")
+            document.getElementById('loginIdFail').innerText = "아이디에는 특수문자가 포함될 수 없습니다."
+            return
+        } else if (/[ㄱ-ㅎㅏ-ㅣ가-힣]/g.test(inputLoginId)) {
+            document.getElementById('loginIdFail').removeAttribute("hidden")
+            document.getElementById('loginIdFail').innerText = "아이디에는 한글이 포함될 수 없습니다."
+            return
+        } else if (inputLoginId.search(/\s/) !== -1) {
+            document.getElementById('loginIdFail').removeAttribute("hidden")
+            document.getElementById('loginIdFail').innerText = "아이디에는 공백이 포함될 수 없습니다."
+            return
+
+        }
+
+        // 글자수 체크
+        if (inputLoginId.length < 3) {
+            document.getElementById('loginIdFail').removeAttribute("hidden")
+            document.getElementById('loginIdFail').innerText = "아이디는 3글자 이상만 가능합니다."
+            return
+        } else if (inputLoginId.length > 10) {
+            document.getElementById('loginIdFail').removeAttribute("hidden")
+            document.getElementById('loginIdFail').innerText = "아이디는 10글자 이하만 가능합니다."
+            return
+        }
+
+        $.ajax({
+            type: 'GET',
+            url: '/api/users/check-loginId',
+            data: {
+                loginId: inputLoginId
+            },
+            success: function (res) {
+                if (res.result == true) {
+                    document.getElementById('loginIdPass').removeAttribute("hidden")
+                    loginIdPass = true
+                    check_all()
+                } else {
+                    document.getElementById('loginIdFail').removeAttribute("hidden")
+                    document.getElementById('loginIdFail').innerText = "아이디가 중복됩니다."
+                }
+            }
+        })
+    }
+
+    function check_passwordCheck() {
+        let inputPassword = $("#password").val()
+        let inputPasswordCheck = $("#passwordCheck").val()
+        passwordCheckPass = false
+
+        document.getElementById('passwordCheckPass').setAttribute("hidden", "true")
+        document.getElementById('passwordCheckFail').setAttribute("hidden", "true")
+        document.getElementById('joinBtn').setAttribute("disabled", "true")
+
+        if (inputPassword == inputPasswordCheck) {
+            document.getElementById('passwordCheckPass').removeAttribute("hidden")
+            passwordCheckPass = true
+            check_all()
+        } else {
+            document.getElementById('passwordCheckFail').removeAttribute("hidden")
+        }
+    }
+
+    function check_nickname() {
+        let inputNickname = $("#nickname").val()
+        nicknamePass = false
+
+        document.getElementById('nicknamePass').setAttribute("hidden", "true")
+        document.getElementById('nicknameFail').setAttribute("hidden", "true")
+        document.getElementById('joinBtn').setAttribute("disabled", "true")
+
+        // 공백 체크
+        if (inputNickname.search(/\s/) !== -1) {
+            document.getElementById('nicknameFail').removeAttribute("hidden")
+            document.getElementById('nicknameFail').innerText = "닉네임에는 공백이 포함될 수 없습니다."
+            return
+
+        }
+
+        // 글자수 체크
+        if (inputNickname.length < 3) {
+            document.getElementById('nicknameFail').removeAttribute("hidden")
+            document.getElementById('nicknameFail').innerText = "닉네임은 3글자 이상만 가능합니다."
+            return
+        } else if (inputNickname.length > 10) {
+            document.getElementById('nicknameFail').removeAttribute("hidden")
+            document.getElementById('nicknameFail').innerText = "닉네임은 10글자 이하만 가능합니다."
+            return
+        }
+
+        $.ajax({
+            type: 'GET',
+            url: '/api/users/check-nickname',
+            data: {
+                nickname: inputNickname
+            },
+            success: function (res) {
+                if (res.result == true) {
+                    document.getElementById('nicknamePass').removeAttribute("hidden")
+                    nicknamePass = true
+                    check_all()
+                } else {
+                    document.getElementById('nicknameFail').removeAttribute("hidden")
+                    document.getElementById('nicknameFail').innerText = "닉네임이 중복됩니다."
+                }
+            }
+        })
+    }
+</script>
+
+</html>
