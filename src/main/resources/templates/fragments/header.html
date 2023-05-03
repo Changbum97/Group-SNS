@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" >
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:fragment="head">
   <meta charset="UTF-8">
   <title>Our Story</title>
@@ -18,7 +18,11 @@
 
     <div align="center" style="height: 20%;">
       <h1 style="color: whitesmoke; padding-top: 30px;">Our Story</h1>
+
+      <h2 style="color: whitesmoke;" sec:authorize="isAnonymous()">로그인안함</h2>
+      <h2 style="color: whitesmoke;" sec:authorize="isAuthenticated()">로그인함</h2>
     </div>
+
 
     <div style="height: 60%; margin-left: 10px;">
       <button class="btn side-bar-icon-btn">

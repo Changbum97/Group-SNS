@@ -1,2 +1,6 @@
-package study.sns.domain.dto.user;public interface UserRole {
+package study.sns.domain.dto.user;
+
+public enum UserRole {
+
+    USER, ADMIN;
 }

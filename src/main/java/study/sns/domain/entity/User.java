@@ -4,17 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import study.sns.domain.dto.user.UserRole;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class User {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,4 +22,6 @@ public class User {
     private String password;
     private String nickname;
 
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
 }
