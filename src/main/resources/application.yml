@@ -9,7 +9,7 @@ spring:
     hibernate:
       ddl-auto: create
 
-# ?? ?? ?? ?? ? ?? ??
+# 포트 설정 및 한글 깨짐 현상 방지
 server:
   port: 8085
   servlet:
