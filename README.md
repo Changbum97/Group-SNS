@@ -1,4 +1,4 @@
-# SNS Shopping Mall 프로젝트
+# Group Sns
 
 ## 배포 사이트
 
@@ -20,11 +20,9 @@ http://ec2-52-79-82-151.ap-northeast-2.compute.amazonaws.com:8085/
 - 결제
 - 1대1 채팅
 - Redis
-- 이메일 인증, 전화번호 인증
+- 인증
 - 알람
-- Jwt Token
 - Oauth
-- 에러페이지
 - 관리자 기능
 - Controller, RestController 분리
 
