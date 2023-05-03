@@ -1,4 +1,4 @@
-package study.sns.domain;
+package study.sns.domain.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
