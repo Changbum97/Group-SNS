@@ -1,4 +1,4 @@
-package study.ssm.controller;
+package study.sns.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

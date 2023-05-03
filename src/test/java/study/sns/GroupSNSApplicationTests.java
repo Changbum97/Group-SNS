@@ -1,10 +1,10 @@
-package study.ssm;
+package study.sns;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SnsShoppingMallApplicationTests {
+class GroupSNSApplicationTests {
 
     @Test
     void contextLoads() {

@@ -1,4 +1,4 @@
-package study.ssm.domain;
+package study.sns.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

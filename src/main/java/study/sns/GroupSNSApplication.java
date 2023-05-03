@@ -1,13 +1,13 @@
-package study.ssm;
+package study.sns;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SnsShoppingMallApplication {
+public class GroupSNSApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SnsShoppingMallApplication.class, args);
+        SpringApplication.run(GroupSNSApplication.class, args);
     }
 
 }
