@@ -68,22 +68,23 @@
         let inputLoginId = $("#loginId").val()
         loginIdPass = false
 
-        document.getElementById('loginIdPass').setAttribute("hidden", "true")
-        document.getElementById('loginIdFail').setAttribute("hidden", "true")
         document.getElementById('joinBtn').setAttribute("disabled", "true")
 
         // 한글, 특수문자, 공백 체크
         if (/[!?@#$%^&*():;+\-=~{}<>\_\[\]\|\\\"\'\,\.\/\`\₩]/g.test(inputLoginId)) {
             document.getElementById('loginIdFail').removeAttribute("hidden")
             document.getElementById('loginIdFail').innerText = "아이디에는 특수문자가 포함될 수 없습니다."
+            document.getElementById('loginIdPass').setAttribute("hidden", "true")
             return
         } else if (/[ㄱ-ㅎㅏ-ㅣ가-힣]/g.test(inputLoginId)) {
             document.getElementById('loginIdFail').removeAttribute("hidden")
             document.getElementById('loginIdFail').innerText = "아이디에는 한글이 포함될 수 없습니다."
+            document.getElementById('loginIdPass').setAttribute("hidden", "true")
             return
         } else if (inputLoginId.search(/\s/) !== -1) {
             document.getElementById('loginIdFail').removeAttribute("hidden")
             document.getElementById('loginIdFail').innerText = "아이디에는 공백이 포함될 수 없습니다."
+            document.getElementById('loginIdPass').setAttribute("hidden", "true")
             return
 
         }
@@ -92,10 +93,12 @@
         if (inputLoginId.length < 3) {
             document.getElementById('loginIdFail').removeAttribute("hidden")
             document.getElementById('loginIdFail').innerText = "아이디는 3글자 이상만 가능합니다."
+            document.getElementById('loginIdPass').setAttribute("hidden", "true")
             return
         } else if (inputLoginId.length > 10) {
             document.getElementById('loginIdFail').removeAttribute("hidden")
             document.getElementById('loginIdFail').innerText = "아이디는 10글자 이하만 가능합니다."
+            document.getElementById('loginIdPass').setAttribute("hidden", "true")
             return
         }
 
@@ -114,6 +117,7 @@
                 } else {
                     document.getElementById('loginIdFail').removeAttribute("hidden")
                     document.getElementById('loginIdFail').innerText = "아이디가 중복됩니다."
+                    document.getElementById('loginIdPass').setAttribute("hidden", "true")
                 }
             }
         })
@@ -124,16 +128,16 @@
         let inputPasswordCheck = $("#passwordCheck").val()
         passwordCheckPass = false
 
-        document.getElementById('passwordCheckPass').setAttribute("hidden", "true")
-        document.getElementById('passwordCheckFail').setAttribute("hidden", "true")
         document.getElementById('joinBtn').setAttribute("disabled", "true")
 
         if (inputPassword == inputPasswordCheck) {
             document.getElementById('passwordCheckPass').removeAttribute("hidden")
+            document.getElementById('passwordCheckFail').setAttribute("hidden", "true")
             passwordCheckPass = true
             check_all()
         } else {
             document.getElementById('passwordCheckFail').removeAttribute("hidden")
+            document.getElementById('passwordCheckPass').setAttribute("hidden", "true")
         }
     }
 
@@ -141,14 +145,13 @@
         let inputNickname = $("#nickname").val()
         nicknamePass = false
 
-        document.getElementById('nicknamePass').setAttribute("hidden", "true")
-        document.getElementById('nicknameFail').setAttribute("hidden", "true")
         document.getElementById('joinBtn').setAttribute("disabled", "true")
 
         // 공백 체크
         if (inputNickname.search(/\s/) !== -1) {
             document.getElementById('nicknameFail').removeAttribute("hidden")
             document.getElementById('nicknameFail').innerText = "닉네임에는 공백이 포함될 수 없습니다."
+            document.getElementById('nicknamePass').setAttribute("hidden", "true")
             return
 
         }
@@ -157,10 +160,12 @@
         if (inputNickname.length < 3) {
             document.getElementById('nicknameFail').removeAttribute("hidden")
             document.getElementById('nicknameFail').innerText = "닉네임은 3글자 이상만 가능합니다."
+            document.getElementById('nicknamePass').setAttribute("hidden", "true")
             return
         } else if (inputNickname.length > 10) {
             document.getElementById('nicknameFail').removeAttribute("hidden")
             document.getElementById('nicknameFail').innerText = "닉네임은 10글자 이하만 가능합니다."
+            document.getElementById('nicknamePass').setAttribute("hidden", "true")
             return
         }
 
@@ -179,6 +184,7 @@
                 } else {
                     document.getElementById('nicknameFail').removeAttribute("hidden")
                     document.getElementById('nicknameFail').innerText = "닉네임이 중복됩니다."
+                    document.getElementById('nicknamePass').setAttribute("hidden", "true")
                 }
             }
         })
