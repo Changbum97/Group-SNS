@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import study.sns.domain.dto.user.UserDto;
-import study.sns.domain.dto.user.UserJoinRequest;
-import study.sns.domain.dto.user.UserLoginRequest;
-import study.sns.domain.dto.user.UserRole;
+import study.sns.domain.dto.user.*;
 import study.sns.domain.entity.User;
 import study.sns.domain.exception.AppException;
 import study.sns.domain.exception.ErrorCode;
@@ -21,10 +18,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
 
-    private static final long expireTimeMs = 1000 * 60 * 60;    // 1시간
-
     @Value("${jwt.token.secret}")
     private String secretKey;
+    @Value("${jwt.duration.access-token}")
+    private Long accessTokenDurationSec;
+    @Value("${jwt.duration.refresh-token}")
+    private Long refreshTokenDurationSec;
 
     public UserDto saveUser(UserJoinRequest req) {
         if (!checkLoginId(req.getLoginId()) || !checkNickname(req.getNickname())) {
@@ -35,17 +34,21 @@ public class UserService {
         return UserDto.of(savedUser);
     }
 
-    public String login(UserLoginRequest req) {
-        User user = userRepository.findByLoginId(req.getLoginId())
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+    public UserLoginResponse login(UserLoginRequest req) {
+        User user = findByLoginId(req.getLoginId());
 
         if (!encoder.matches(req.getPassword(), user.getPassword())) {
             throw new AppException(ErrorCode.WRONG_PASSWORD);
         }
 
         // JWT Token 발급
-        String jwtToken = JwtTokenUtil.createToken(user.getLoginId(), secretKey, expireTimeMs);
-        return jwtToken;
+        String accessToken = JwtTokenUtil.createToken(user.getLoginId(), secretKey, accessTokenDurationSec * 1000);
+        String refreshToken = JwtTokenUtil.createToken(user.getLoginId(), secretKey, refreshTokenDurationSec * 1000);
+        return UserLoginResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .nickname(user.getNickname())
+                .build();
     }
 
     public Boolean checkLoginId(String loginId) {
@@ -54,5 +57,10 @@ public class UserService {
 
     public Boolean checkNickname(String nickname) {
         return !userRepository.existsByNickname(nickname);
+    }
+
+    public User findByLoginId(String loginId) {
+        return userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
     }
 }

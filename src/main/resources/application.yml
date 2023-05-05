@@ -15,3 +15,9 @@ server:
   servlet:
     encoding:
       force-response: true
+
+# Jwt Token 유지 시간
+jwt:
+  duration:
+    access-token: 60   # 30분 = 1800초
+    refresh-token: 180   # 7일 = 168시간 = 10080분 = 604800초

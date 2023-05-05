@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"/>
+<body>
+    <div class="row" style="height: 100%">
+        <div th:replace="fragments/header.html :: side-bar" />
+        <div class="col-10" style="display: flex; justify-content: center; align-items: center;">
+            <form class="form-group user-form" th:object="${userLoginRequest}" id="userLoginRequest" align="left">
+                <div>
+                    <label th:for="loginId">아이디</label><br/>
+                    <input type="text" th:field="*{loginId}" placeholder="아이디를 입력해주세요."/>
+                </div>
+                <br/>
+                <div>
+                    <label th:for="password">비밀번호</label><br/>
+                    <input type="password" th:field="*{password}" placeholder="비밀번호를 입력해주세요."/>
+                </div>
+                <br/>
+                <div align="center">
+                    <button class="btn user-btn" type="button" onclick="login()">로그인</button>
+                </div>
+            </form>
+        </div>
+        <span id="accessTokenDuration" th:text="${@environment.getProperty('jwt.duration.access-token')}" hidden></span>
+        <span id="refreshTokenDuration" th:text="${@environment.getProperty('jwt.duration.refresh-token')}" hidden></span>
+    </div>
+</body>
+
+<script th:inline="javascript">
+
+    function login() {
+        $.ajax({
+            type: 'POST',
+            url: '/api/users/login',
+            data: $('#userLoginRequest').serialize(),
+            success: function (res) {
+                setCookie("accessToken", res.result.accessToken)
+                setCookie("refreshToken", res.result.refreshToken)
+                alert(res.result.nickname + '님 반갑습니다!')
+                location.href='/'
+            },
+        })
+    }
+
+    function setCookie(name, token) {
+
+        let expireDate = new Date();
+        if (name == 'accessToken') {
+            expireDate.setSeconds(expireDate.getSeconds() + Number($('#accessTokenDuration').text()))
+        } else {
+            expireDate.setSeconds(expireDate.getSeconds() + Number($('#refreshTokenDuration').text()))
+        }
+
+        let value = escape(token) + ';expires=' + expireDate.toUTCString() + ';path=/'
+        document.cookie = name + '=' + value
+    }
+</script>
+
+</html>

@@ -23,7 +23,7 @@ html, body {
     animation: jelly 0.5s;
 }
 
-.side-bar-icon-btn:active:focus {
+.side-bar-icon-btn:active:focus, .side-bar-icon-btn:focus {
     color: whitesmoke;
     border: none;
     filter: brightness(70%);
@@ -47,7 +47,7 @@ html, body {
     animation: jelly 0.5s;
 }
 
-.side-bar-btn:active:focus {
+.side-bar-btn:active:focus, .side-bar-btn:focus {
     color: #333333;
     background-color: whitesmoke;
     border: none;
@@ -73,7 +73,7 @@ html, body {
     animation: jelly 0.5s;
 }
 
-.user-btn:active:focus {
+.user-btn:active:focus, .user-btn:focus {
     color: #333333;
     background-color: whitesmoke;
     border: none;

@@ -27,7 +27,7 @@
       <h1 style="color: whitesmoke; padding-top: 30px;">Our Story</h1>
 
       <h2 style="color: whitesmoke;" sec:authorize="isAnonymous()">로그인안함</h2>
-      <h2 style="color: whitesmoke;" sec:authorize="isAuthenticated()">로그인함</h2>
+      <h2 style="color: whitesmoke;" sec:authorize="isAuthenticated()">[[${loginId}]]</h2>
     </div>
 
 
@@ -54,7 +54,7 @@
 
     <div align="center" style="height: 20%;">
       <button class="btn side-bar-btn" onclick="location.href='/users/login'">login</button>
-      <button class="btn side-bar-btn" onclick="location.href='users/join'">join</button>
+      <button class="btn side-bar-btn" onclick="location.href='/users/join'">join</button>
     </div>
   </div>
 </body>

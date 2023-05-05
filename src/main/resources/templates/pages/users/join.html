@@ -108,6 +108,7 @@
             success: function (res) {
                 if (res.result == true) {
                     document.getElementById('loginIdPass').removeAttribute("hidden")
+                    document.getElementById('loginIdFail').setAttribute("hidden", "true")
                     loginIdPass = true
                     check_all()
                 } else {
@@ -172,6 +173,7 @@
             success: function (res) {
                 if (res.result == true) {
                     document.getElementById('nicknamePass').removeAttribute("hidden")
+                    document.getElementById('nicknameFail').setAttribute("hidden", "true")
                     nicknamePass = true
                     check_all()
                 } else {
