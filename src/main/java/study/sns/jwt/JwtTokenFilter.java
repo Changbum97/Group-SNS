@@ -2,8 +2,8 @@ package study.sns.jwt;
 
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +29,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private final String secretKey;
     private final Long accessTokenDurationSec;
     private final UserService userService;
+    private final StringRedisTemplate stringRedisTemplate;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -99,6 +100,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
                 String loginId = JwtTokenUtil.getLoginId(token, secretKey);
                 User loginUser = userService.findByLoginId(loginId);
+
+                // Refresh Token 검증
+                ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
+                if (!stringStringValueOperations.get(loginId + "_refreshToken").equals(token)) {
+                    throw new AppException(ErrorCode.INVALID_TOKEN);
+                }
 
                 // Refresh Token이 유효하면 Access Token을 다시 생성
                 Cookie cookie = new Cookie("accessToken",

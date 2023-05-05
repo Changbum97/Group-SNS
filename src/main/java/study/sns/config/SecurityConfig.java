@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -26,6 +27,7 @@ public class SecurityConfig {
     @Value("${jwt.duration.access-token}")
     private Long accessTokenDurationSec;
     private final UserService userService;
+    private final StringRedisTemplate stringRedisTemplate;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, HttpServletResponse response) throws Exception {
@@ -42,7 +44,7 @@ public class SecurityConfig {
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
         .addFilterBefore(
-               new JwtTokenFilter(secretKey, accessTokenDurationSec, userService),
+               new JwtTokenFilter(secretKey, accessTokenDurationSec, userService, stringRedisTemplate),
                UsernamePasswordAuthenticationFilter.class)
         .addFilterBefore(new SecurityExceptionHandler(), JwtTokenFilter.class)
         .build();
