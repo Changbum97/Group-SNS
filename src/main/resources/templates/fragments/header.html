@@ -27,7 +27,7 @@
       <h1 style="color: whitesmoke; padding-top: 30px;">Our Story</h1>
 
       <h2 style="color: whitesmoke;" sec:authorize="isAnonymous()">로그인안함</h2>
-      <h2 style="color: whitesmoke;" sec:authorize="isAuthenticated()">[[${loginId}]]</h2>
+      <h2 style="color: whitesmoke;" sec:authorize="isAuthenticated()">[[${nickname}]]</h2>
     </div>
 
 
@@ -68,7 +68,7 @@
           type: 'GET',
           url: '/api/users/logout',
           success: function (res) {
-            if (res.result.includes('성공')) {
+            if (res.resultCode == "SUCCESS") {
               deleteCookie()
               alert('로그아웃에 성공하였습니다.')
             }
@@ -78,18 +78,28 @@
       }
 
       function deleteCookie() {
-        if (getCookie("accessToken")) {
-          document.cookie = 'accessToken=;expires=Thu, 01 Jan 1970 00:00:01 GMT';
+        if (checkCookie("accessToken")) {
+          document.cookie = 'accessToken=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/';
         }
-        if (getCookie("refreshToken")) {
-          document.cookie = 'refreshToken=;expires=Thu, 01 Jan 1970 00:00:01 GMT';
+        if (checkCookie("refreshToken")) {
+          document.cookie = 'refreshToken=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/';
         }
       }
 
-      function getCookie(name){
+      function checkCookie(name){
         return document.cookie.split(';').some(c => {
           return c.trim().startsWith(name + '=');
         });
+      }
+
+      function getCookie(name) {
+        let val = document.cookie.split(';');
+        for (let i = 0; i < val.length; i++) {
+          if (val[i].split('=')[0] == name) {
+            return val[i].split('=')[1]
+          }
+        }
+        return null;
       }
 
     </script>

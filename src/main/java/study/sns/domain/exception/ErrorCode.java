@@ -10,6 +10,9 @@ public enum ErrorCode {
 
     INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "권한이 없습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "유저가 존재하지 않습니다."),
+    DUPLICATED_LOGIN_ID(HttpStatus.CONFLICT, "아이디가 중복됩니다."),
+    DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "닉네임이 중복됩니다."),
+    DUPLICATED_EMAIL(HttpStatus.CONFLICT, "이메일이 중복됩니다."),
     WRONG_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 틀렸습니다."),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 접근입니다."),
     TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "파기된 토큰입니다."),

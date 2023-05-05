@@ -35,6 +35,14 @@
                     <div id="nicknameFail" class="user-div-fail" hidden></div>
                 </div>
                 <br/>
+                <div>
+                    <label th:for="email">이메일</label><br/>
+                    <input type="text" th:field="*{email}" oninput="check_email()"
+                           placeholder="이메일을 입력해주세요."/>
+                    <div id="emailPass" class="user-div-pass" hidden>사용 가능한 이메일입니다.</div>
+                    <div id="emailFail" class="user-div-fail" hidden></div>
+                </div>
+                <br/>
                 <div align="center">
                     <button id="joinBtn" class="btn user-btn" type="button" onclick="join()" disabled>회원가입</button>
                 </div>
@@ -44,7 +52,7 @@
 </body>
 
 <script th:inline="javascript">
-    let loginIdPass, passwordCheckPass, nicknamePass = false
+    let loginIdPass, passwordCheckPass, nicknamePass, emailPass = false
 
     function join() {
         $.ajax({
@@ -185,6 +193,52 @@
                     document.getElementById('nicknameFail').removeAttribute("hidden")
                     document.getElementById('nicknameFail').innerText = "닉네임이 중복됩니다."
                     document.getElementById('nicknamePass').setAttribute("hidden", "true")
+                }
+            }
+        })
+    }
+
+    function check_email() {
+        let inputEmail = $("#email").val()
+        emailPass = false
+
+        document.getElementById('joinBtn').setAttribute("disabled", "true")
+
+        // 이메일 형식, 한글, 공백
+        if (!inputEmail.includes("@") || !inputEmail.includes(".")) {
+            document.getElementById('emailFail').removeAttribute("hidden")
+            document.getElementById('emailFail').innerText = "이메일 형식이 아닙니다."
+            document.getElementById('emailPass').setAttribute("hidden", "true")
+            return
+        } else if (/[ㄱ-ㅎㅏ-ㅣ가-힣]/g.test(inputEmail)) {
+            document.getElementById('emailFail').removeAttribute("hidden")
+            document.getElementById('emailFail').innerText = "이메일에는 한글이 포함될 수 없습니다."
+            document.getElementById('emailPass').setAttribute("hidden", "true")
+            return
+        } else if (inputEmail.search(/\s/) !== -1) {
+            document.getElementById('emailFail').removeAttribute("hidden")
+            document.getElementById('emailFail').innerText = "이메일에는 공백이 포함될 수 없습니다."
+            document.getElementById('emailPass').setAttribute("hidden", "true")
+            return
+
+        }
+
+        $.ajax({
+            type: 'GET',
+            url: '/api/users/check-email',
+            data: {
+                email: inputEmail
+            },
+            success: function (res) {
+                if (res.result == true) {
+                    document.getElementById('emailPass').removeAttribute("hidden")
+                    document.getElementById('emailFail').setAttribute("hidden", "true")
+                    loginIdPass = true
+                    check_all()
+                } else {
+                    document.getElementById('emailFail').removeAttribute("hidden")
+                    document.getElementById('emailFail').innerText = "이메일이 중복됩니다."
+                    document.getElementById('emailPass').setAttribute("hidden", "true")
                 }
             }
         })

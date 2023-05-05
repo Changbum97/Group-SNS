@@ -16,6 +16,18 @@ spring:
     host: ec2-52-79-82-151.ap-northeast-2.compute.amazonaws.com
     port: 6379
 
+  # Oauth Login
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 208682346817-5t05smljuv1odp30ctgd97n6b4sjucun.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - email
+              - profile
+
 # 포트 설정 및 한글 깨짐 현상 방지
 server:
   port: 8085
@@ -28,3 +40,4 @@ jwt:
   duration:
     access-token: 1800   # 30분 = 1800초
     refresh-token: 604800   # 7일 = 168시간 = 10080분 = 604800초
+

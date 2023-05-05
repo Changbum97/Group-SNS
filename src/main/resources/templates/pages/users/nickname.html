@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"/>
+<body>
+    <div class="row" style="height: 100%">
+        <div th:replace="fragments/header.html :: side-bar" />
+        <div class="col-10" style="display: flex; justify-content: center; align-items: center;">
+            <form class="form-group user-form" align="left">
+                <div>
+                    <label th:for="nickname">닉네임</label><br/>
+                    <input type="text" id="nickname" name="nickname" oninput="check_nickname()"
+                           placeholder="사용할 닉네임을 입력해주세요."/>
+                    <div id="nicknamePass" class="user-div-pass" hidden>사용 가능한 닉네임입니다.</div>
+                    <div id="nicknameFail" class="user-div-fail" hidden></div>
+                </div>
+                <br/>
+                <div align="center">
+                    <button id="nicknameBtn" class="btn user-btn" type="button" onclick="setNickname()" disabled>저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+<script th:inline="javascript">
+
+    function setNickname() {
+        $.ajax({
+            type: 'POST',
+            url: '/api/users/nickname',
+            data: {
+                "nickname": document.getElementById('nickname').value,
+                "accessToken": getCookie("accessToken")
+            },
+            success: function (res) {
+                alert(res.result + '님 반갑습니다!')
+                location.href = '/'
+            },
+        })
+    }
+
+    function check_nickname() {
+        let inputNickname = $("#nickname").val()
+        console.log(inputNickname)
+        document.getElementById('nicknameBtn').setAttribute("disabled", "true")
+
+        // 공백 체크
+        if (inputNickname.search(/\s/) !== -1) {
+            document.getElementById('nicknameFail').removeAttribute("hidden")
+            document.getElementById('nicknameFail').innerText = "닉네임에는 공백이 포함될 수 없습니다."
+            document.getElementById('nicknamePass').setAttribute("hidden", "true")
+            return
+
+        }
+
+        // 글자수 체크
+        if (inputNickname.length < 3) {
+            document.getElementById('nicknameFail').removeAttribute("hidden")
+            document.getElementById('nicknameFail').innerText = "닉네임은 3글자 이상만 가능합니다."
+            document.getElementById('nicknamePass').setAttribute("hidden", "true")
+            return
+        } else if (inputNickname.length > 10) {
+            document.getElementById('nicknameFail').removeAttribute("hidden")
+            document.getElementById('nicknameFail').innerText = "닉네임은 10글자 이하만 가능합니다."
+            document.getElementById('nicknamePass').setAttribute("hidden", "true")
+            return
+        }
+
+        $.ajax({
+            type: 'GET',
+            url: '/api/users/check-nickname',
+            data: {
+                nickname: inputNickname
+            },
+            success: function (res) {
+                if (res.result == true) {
+                    document.getElementById('nicknamePass').removeAttribute("hidden")
+                    document.getElementById('nicknameFail').setAttribute("hidden", "true")
+                    document.getElementById('nicknameBtn').removeAttribute("disabled")
+                } else {
+                    document.getElementById('nicknameFail').removeAttribute("hidden")
+                    document.getElementById('nicknameFail').innerText = "닉네임이 중복됩니다."
+                    document.getElementById('nicknamePass').setAttribute("hidden", "true")
+                }
+            }
+        })
+    }
+</script>
+
+</html>

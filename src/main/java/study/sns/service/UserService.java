@@ -6,16 +6,14 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import study.sns.domain.Response;
 import study.sns.domain.dto.user.*;
 import study.sns.domain.entity.User;
 import study.sns.domain.exception.AppException;
 import study.sns.domain.exception.ErrorCode;
-import study.sns.jwt.JwtTokenUtil;
+import study.sns.util.JwtTokenUtil;
 import study.sns.repository.UserRepository;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -34,8 +32,12 @@ public class UserService {
     private Long refreshTokenDurationSec;
 
     public UserDto saveUser(UserJoinRequest req) {
-        if (!checkLoginId(req.getLoginId()) || !checkNickname(req.getNickname())) {
-            throw new AppException(ErrorCode.BAD_REQUEST);
+        if (!checkLoginId(req.getLoginId())) {
+            throw new AppException(ErrorCode.DUPLICATED_LOGIN_ID);
+        } else if (!checkNickname(req.getNickname())) {
+            throw new AppException(ErrorCode.DUPLICATED_NICKNAME);
+        } else if (!checkEmail(req.getEmail())) {
+            throw new AppException(ErrorCode.DUPLICATED_EMAIL);
         }
 
         User savedUser = userRepository.save( req.toEntity(encoder.encode(req.getPassword()), UserRole.USER) );
@@ -66,12 +68,20 @@ public class UserService {
                 .build();
     }
 
-    public String logout(String loginId) {
-
+    public void logout(String loginId) {
         stringRedisTemplate.delete(loginId + "_refreshToken");
-        User loginUser = findByLoginId(loginId);
+    }
 
-        return loginUser.getNickname() + "님 로그아웃 성공";
+    @Transactional
+    public String setNickname(String nickname, String accessToken) {
+        if (!checkNickname(nickname)) {
+            throw new AppException(ErrorCode.DUPLICATED_NICKNAME);
+        }
+
+        String loginId = JwtTokenUtil.getLoginId(accessToken, secretKey);
+        User user = findByLoginId(loginId);
+        user.setNickname(nickname);
+        return nickname;
     }
 
     public Boolean checkLoginId(String loginId) {
@@ -82,8 +92,17 @@ public class UserService {
         return !userRepository.existsByNickname(nickname);
     }
 
+    public Boolean checkEmail(String email) {
+        return !userRepository.existsByEmail(email);
+    }
+
     public User findByLoginId(String loginId) {
         return userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    public User findByAccessToken(String accessToken) {
+        String loginId = JwtTokenUtil.getLoginId(accessToken, secretKey);
+        return findByLoginId(loginId);
     }
 }

@@ -1,4 +1,4 @@
-package study.sns.jwt;
+package study.sns.filter;
 
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +13,7 @@ import study.sns.domain.entity.User;
 import study.sns.domain.exception.AppException;
 import study.sns.domain.exception.ErrorCode;
 import study.sns.service.UserService;
+import study.sns.util.JwtTokenUtil;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

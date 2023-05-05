@@ -1,4 +1,4 @@
-package study.sns.jwt;
+package study.sns.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

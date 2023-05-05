@@ -23,6 +23,7 @@ public class MakeInitData {
                 .password(encoder.encode("1234"))
                 .nickname("관리자")
                 .userRole(UserRole.ADMIN)
+                .email("aaa@aaa")
                 .build();
 
         userRepository.save(admin);
@@ -32,6 +33,7 @@ public class MakeInitData {
                 .password(encoder.encode("1234"))
                 .nickname("지나가는행인")
                 .userRole(UserRole.USER)
+                .email("bbb@bbb")
                 .build();
 
         userRepository.save(user1);

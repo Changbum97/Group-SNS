@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import study.sns.domain.Response;
-import study.sns.domain.dto.user.UserDto;
-import study.sns.domain.dto.user.UserJoinRequest;
-import study.sns.domain.dto.user.UserLoginRequest;
-import study.sns.domain.dto.user.UserLoginResponse;
+import study.sns.domain.dto.user.*;
 import study.sns.service.UserService;
 
 import javax.servlet.http.HttpServletResponse;
@@ -31,7 +28,13 @@ public class UserApiController {
 
     @GetMapping("/logout")
     public Response<String> logout(Authentication auth) {
-        return Response.success(userService.logout(auth.getName()));
+        userService.logout(auth.getName());
+        return Response.success("SUCCESS");
+    }
+
+    @PostMapping("/nickname")
+    public Response<String> setNickname(@ModelAttribute UserSetNicknameRequest req) {
+        return Response.success(userService.setNickname(req.getNickname(), req.getAccessToken()));
     }
 
     @GetMapping("/check-loginId")
@@ -46,4 +49,9 @@ public class UserApiController {
         return Response.success(pass);
     }
 
+    @GetMapping("/check-email")
+    public Response<Boolean> checkEmail(@RequestParam String email) {
+        Boolean pass = userService.checkEmail(email);
+        return Response.success(pass);
+    }
 }

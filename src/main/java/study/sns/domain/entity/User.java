@@ -22,7 +22,16 @@ public class User extends BaseEntity {
     private String loginId;
     private String password;
     private String nickname;
+    private String email;
 
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
+
+    // Oauth Login
+    private String provider;
+    private String providerId;
+
+    public void setNickname(String newNickname) {
+        this.nickname = newNickname;
+    }
 }
