@@ -52,10 +52,49 @@
       </button>
     </div>
 
-    <div align="center" style="height: 20%;">
+    <div sec:authorize="isAnonymous()" align="center" style="height: 20%;">
       <button class="btn side-bar-btn" onclick="location.href='/users/login'">login</button>
       <button class="btn side-bar-btn" onclick="location.href='/users/join'">join</button>
     </div>
+    <div sec:authorize="isAuthenticated()" align="center" style="height: 20%;">
+      <button class="btn side-bar-btn" type="button" onclick="logout()">logout</button>
+    </div>
+
+
+    <script th:inline="javascript">
+
+      function logout() {
+        $.ajax({
+          type: 'GET',
+          url: '/api/users/logout',
+          success: function (res) {
+            if (res.result.includes('성공')) {
+              deleteCookie()
+              alert('로그아웃에 성공하였습니다.')
+            }
+            location.href='/'
+          },
+        })
+      }
+
+      function deleteCookie() {
+        if (getCookie("accessToken")) {
+          document.cookie = 'accessToken=;expires=Thu, 01 Jan 1970 00:00:01 GMT';
+        }
+        if (getCookie("refreshToken")) {
+          document.cookie = 'refreshToken=;expires=Thu, 01 Jan 1970 00:00:01 GMT';
+        }
+      }
+
+      function getCookie(name){
+        return document.cookie.split(';').some(c => {
+          return c.trim().startsWith(name + '=');
+        });
+      }
+
+    </script>
+
   </div>
 </body>
+
 </html>

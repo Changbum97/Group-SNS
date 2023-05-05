@@ -37,7 +37,7 @@ public class SecurityConfig {
         .csrf().disable()
         .cors().and()
         .authorizeRequests()
-        .antMatchers(HttpMethod.GET, "/test").authenticated()
+        .antMatchers(HttpMethod.GET, "/api/users/logout").authenticated()
         .anyRequest().permitAll()
         .and()
         .sessionManagement()

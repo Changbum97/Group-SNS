@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import study.sns.domain.Response;
 import study.sns.domain.dto.user.*;
 import study.sns.domain.entity.User;
 import study.sns.domain.exception.AppException;
@@ -13,6 +14,8 @@ import study.sns.domain.exception.ErrorCode;
 import study.sns.jwt.JwtTokenUtil;
 import study.sns.repository.UserRepository;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -61,6 +64,14 @@ public class UserService {
                 .refreshToken(refreshToken)
                 .nickname(user.getNickname())
                 .build();
+    }
+
+    public String logout(String loginId) {
+
+        stringRedisTemplate.delete(loginId + "_refreshToken");
+        User loginUser = findByLoginId(loginId);
+
+        return loginUser.getNickname() + "님 로그아웃 성공";
     }
 
     public Boolean checkLoginId(String loginId) {
