@@ -61,7 +61,8 @@ jobs:
         script: |
           sudo docker kill ${{ secrets.PROJECT_NAME }}
           sudo docker rm -f ${{ secrets.PROJECT_NAME }}
-          sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/{{ secrets.PROJECT_NAME }}
+          sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/{{ secrets.PROJECT_NAME }}:latest
+          sudo docker rmi $(docker images -a|grep "<none>"|awk '$1=="${{ secrets.DOCKERHUB_USERNAME }}/{{ secrets.PROJECT_NAME }}" {print $3}')
           sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
 
           sudo docker run -p ${{ secrets.PORT }}:${{ secrets.PORT }} \
@@ -71,4 +72,6 @@ jobs:
           -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
           -e JWT_TOKEN_SECRET=${{ secrets.JWT_TOKEN_SECRET }} \
           -e SPRING_REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} \
+          -e SPRING_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT-SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
+          -e SPRING_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT-SECRET=${{ secrets.KAKAO_CLIENT_SECRET }} \
           -d ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
