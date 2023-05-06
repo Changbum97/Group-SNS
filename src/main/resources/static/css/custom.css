@@ -113,6 +113,26 @@ html, body {
     color: orangered;
 }
 
+.oauth-img {
+    width: 40px;
+    height: 40px;
+}
+
+.oauth-btn{
+    background-color: unset;
+    border: none;
+}
+
+.oauth-btn:hover {
+    border: none;
+    animation: jelly 0.5s;
+}
+
+.oauth-btn:active:focus, .oauth-btn:focus {
+    animation: jelly 0.5s;
+}
+
+
 @keyframes jelly {
     25% {
         transform: scale(0.9, 1.1);

@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import study.sns.domain.dto.user.UserRole;
 import study.sns.domain.dto.user.oauth.GoogleUserInfo;
+import study.sns.domain.dto.user.oauth.KakaoUserInfo;
 import study.sns.domain.dto.user.oauth.OAuth2UserInfo;
 import study.sns.domain.dto.user.oauth.UserDetail;
 import study.sns.domain.entity.User;
@@ -37,7 +38,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
                 oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
                 break;
             case "kakao":
-                //oAuth2UserInfo = new KakaoUserInfo(oAuth2UserInfo.getAttributes());
+                oAuth2UserInfo = new KakaoUserInfo(oAuth2User.getAttributes());
                 break;
         }
 

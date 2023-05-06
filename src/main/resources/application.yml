@@ -23,10 +23,28 @@ spring:
         registration:
           google:
             client-id: 208682346817-5t05smljuv1odp30ctgd97n6b4sjucun.apps.googleusercontent.com
-            client-secret: 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
+            # client-secret -> 환경변수
             scope:
               - email
               - profile
+          kakao:
+            client-id: b14fc5d2c866ed1b260695c1b46dfab5
+            # client-secret -> 환경변수
+            scope:
+              - account_email
+              - profile_nickname
+            authorization-grant-type: authorization_code
+            redirect-uri: http://ec2-52-79-82-151.ap-northeast-2.compute.amazonaws.com:8085/login/oauth2/code/kakao
+            #redirect-uri: http://localhost:8085/login/oauth2/code/kakao
+            client-name: Kakao
+            client-authentication-method: POST
+
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
 
 # 포트 설정 및 한글 깨짐 현상 방지
 server:
