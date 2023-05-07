@@ -33,10 +33,13 @@
 
     <div style="height: 60%; margin-left: 10px;">
       <button class="btn side-bar-icon-btn">
-        <i class="bi bi-house-fill">&nbsp;Home</i>
+        <i class="bi bi-house-fill" onclick="location.href='/'">&nbsp;Home</i>
       </button>
       <button class="btn side-bar-icon-btn">
         <i class="bi bi-calendar-fill">&nbsp;Calendar</i>
+      </button>
+      <button class="btn side-bar-icon-btn">
+        <i class="bi bi-hearts" onclick="location.href='/groups'">&nbsp;Group</i>
       </button>
       <button class="btn side-bar-icon-btn">
         <i class="bi bi-person-heart">&nbsp;Friends</i>
@@ -45,7 +48,7 @@
         <i class="bi bi-people-fill">&nbsp;Others</i>
       </button>
       <button class="btn side-bar-icon-btn">
-        <i class="bi bi-cart-fill">&nbsp;Shop</i>
+        <i class="bi bi-cart-fill" onclick="location.href='/shops'">&nbsp;Shop</i>
       </button>
       <button class="btn side-bar-icon-btn">
         <i class="bi bi-person-vcard">&nbsp;My Page</i>
@@ -56,7 +59,7 @@
       <button class="btn side-bar-btn" onclick="location.href='/users/login'">login</button>
       <button class="btn side-bar-btn" onclick="location.href='/users/join'">join</button>
     </div>
-    <div sec:authorize="isAuthenticated()" align="center" style="height: 20%;">
+    <div sec:authorize="isAuthenticated()" align="center" style="height: 20%; margin-top: 50px;">
       <button class="btn side-bar-btn" type="button" onclick="logout()">logout</button>
     </div>
 
