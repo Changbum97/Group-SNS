@@ -32,12 +32,16 @@ public class UserService {
     private Long refreshTokenDurationSec;
 
     public UserDto saveUser(UserJoinRequest req) {
-        if (!checkLoginId(req.getLoginId())) {
+        if (req.getLoginId() == null || req.getNickname() == null || req.getPassword() == null || req.getEmail() == null) {
+            throw new AppException(ErrorCode.BAD_REQUEST, "Null일 수 없습니다.");
+        } else if (!checkLoginId(req.getLoginId())) {
             throw new AppException(ErrorCode.DUPLICATED_LOGIN_ID);
         } else if (!checkNickname(req.getNickname())) {
             throw new AppException(ErrorCode.DUPLICATED_NICKNAME);
         } else if (!checkEmail(req.getEmail())) {
             throw new AppException(ErrorCode.DUPLICATED_EMAIL);
+        } else if (!req.getEmail().contains("@") || !req.getEmail().contains(".")) {
+            throw new AppException(ErrorCode.BAD_REQUEST, "Email 형식이 아닙니다.");
         }
 
         User savedUser = userRepository.save( req.toEntity(encoder.encode(req.getPassword()), UserRole.USER) );

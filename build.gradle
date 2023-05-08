@@ -44,6 +44,10 @@ dependencies {
 
     // Oauth Login
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // Swagger 3.0.0 적용
+    implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
 }
 
 tasks.named('test') {

@@ -14,7 +14,7 @@ public enum ErrorCode {
     DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "닉네임이 중복됩니다."),
     DUPLICATED_EMAIL(HttpStatus.CONFLICT, "이메일이 중복됩니다."),
     WRONG_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 틀렸습니다."),
-    BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 접근입니다."),
+    BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "파기된 토큰입니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "잘못된 토큰입니다.")
     ;

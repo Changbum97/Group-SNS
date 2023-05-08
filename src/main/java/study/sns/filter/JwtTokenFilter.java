@@ -127,6 +127,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             }
         } catch (MalformedJwtException e) {
             throw new AppException(ErrorCode.INVALID_TOKEN);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new AppException(ErrorCode.INVALID_TOKEN);
         }
     }
 }

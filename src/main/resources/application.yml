@@ -16,6 +16,11 @@ spring:
     host: ec2-52-79-82-151.ap-northeast-2.compute.amazonaws.com
     port: 6379
 
+  # Swagger
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
   # Oauth Login
   security:
     oauth2:
