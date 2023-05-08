@@ -31,6 +31,10 @@ public class User extends BaseEntity {
     private String provider;
     private String providerId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id")
+    private Group group;
+
     public void setNickname(String newNickname) {
         this.nickname = newNickname;
     }
