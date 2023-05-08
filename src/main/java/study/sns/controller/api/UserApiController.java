@@ -14,7 +14,7 @@ import study.sns.service.UserService;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-@Api(description = "회원가입, 로그인")
+@Api(description = "유저 기능")
 public class UserApiController {
 
     private final UserService userService;
@@ -51,15 +51,6 @@ public class UserApiController {
         return Response.success(pass);
     }
 
-    @GetMapping("/access-token")
-    @ApiOperation(value = "ACCESS-TOKEN 재발급", notes = "ACCESS-TOKEN이 만료된 경우 => REFRESH-TOKEN으로 재발급")
-    public Response<String> getAccessTokenByRefreshToken(@ApiIgnore @CookieValue(name = "accessToken") String accessToken) {
-        // Access Token이 만료되거나 없는데 Refresh Token이 유효하다면 JwtTokenFilter에서 Cookie에 Access Token을 넣어줌
-        // 쿠키에서 Access Token을 추출해 String으로 return
-        return Response.success(accessToken);
-    }
-
-
     @GetMapping("/check-nickname")
     @ApiOperation(value = "Nickname 중복 체크", notes = "true: 중복 X, false: 중복 O")
     public Response<Boolean> checkNickname(@RequestParam String nickname) {
@@ -72,6 +63,14 @@ public class UserApiController {
     public Response<Boolean> checkEmail(@RequestParam String email) {
         Boolean pass = userService.checkEmail(email);
         return Response.success(pass);
+    }
+
+    @GetMapping("/access-token")
+    @ApiOperation(value = "ACCESS-TOKEN 재발급", notes = "ACCESS-TOKEN이 만료된 경우 => REFRESH-TOKEN으로 재발급")
+    public Response<String> getAccessTokenByRefreshToken(@ApiIgnore @CookieValue(name = "accessToken") String accessToken) {
+        // Access Token이 만료되거나 없는데 Refresh Token이 유효하다면 JwtTokenFilter에서 Cookie에 Access Token을 넣어줌
+        // 쿠키에서 Access Token을 추출해 String으로 return
+        return Response.success(accessToken);
     }
 
     @GetMapping("/test")
