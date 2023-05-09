@@ -16,6 +16,21 @@
 - Database: MySQL 8.0
 - File Storage: AWS S3
 
+## 구현 기능
+
+- 유저 기능
+  - 회원가입
+    - 아이디, 닉네임, 이메일 중복 체크
+    - 비밀번호, 비밀번호 확인이 같은지 체크
+    - 이메일 인증 성공해야 가입 가능
+  - 로그인
+    - 아이디, 비밀번호로 로그인
+    - OAuth 로그인 (구글, 카카오) 가능
+    - OAuth 로그인 가입 시 닉네임 설정 필수
+    - 로그인 성공 시 쿠키에 AccessToken, RefreshToken 저장
+  - 아이디 찾기, 비밀번호 찾기 구현
+    - 회원가입 시 등록했던 이메일로 아이디, 비밀번호 찾기
+
 ## Api End Points
 
 - [Swagger Docs](http://ec2-52-79-82-151.ap-northeast-2.compute.amazonaws.com:8085/swagger-ui/)
