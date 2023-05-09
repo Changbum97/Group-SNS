@@ -36,13 +36,27 @@
                 </div>
                 <br/>
                 <div>
-                    <label th:for="email">이메일</label><br/>
+                    <div>
+                        <label th:for="email">이메일</label>
+                        <a style="float: right" onclick="send_email()" href="#">인증 번호 발송</a>
+                    </div>
                     <input type="text" th:field="*{email}" oninput="check_email()"
                            placeholder="이메일을 입력해주세요."/>
                     <div id="emailPass" class="user-div-pass" hidden>사용 가능한 이메일입니다.</div>
                     <div id="emailFail" class="user-div-fail" hidden></div>
                 </div>
                 <br/>
+                <div id="emailAuthDiv" hidden>
+                    <div>
+                        <label th:for="emailAuth">이메일 인증 번호</label>
+                        <span id="timer"></span>
+                    </div>
+                    <input type="text" id="emailAuth" oninput="check_email_auth()"
+                           placeholder="이메일 인증 번호를 입력해주세요."/>
+                    <div id="emailAuthPass" class="user-div-pass" hidden>인증번호가 일치합니다.</div>
+                    <div id="emailAuthFail" class="user-div-fail" hidden></div>
+                    <br/>
+                </div>
                 <div align="center">
                     <button id="joinBtn" class="btn user-btn" type="button" onclick="join()" disabled>회원가입</button>
                 </div>
@@ -52,7 +66,7 @@
 </body>
 
 <script th:inline="javascript">
-    let loginIdPass, passwordCheckPass, nicknamePass, emailPass = false
+    let loginIdPass, passwordCheckPass, nicknamePass, emailPass, emailAuthPass = false
 
     function join() {
         $.ajax({
@@ -67,7 +81,7 @@
     }
 
     function check_all() {
-        if (loginIdPass && passwordCheckPass && nicknamePass) {
+        if (loginIdPass && passwordCheckPass && nicknamePass && emailPass && emailAuthPass) {
             document.getElementById('joinBtn').removeAttribute("disabled")
         }
     }
@@ -201,6 +215,11 @@
     function check_email() {
         let inputEmail = $("#email").val()
         emailPass = false
+        emailAuthPass = false
+        document.getElementById('emailAuthFail').removeAttribute("hidden")
+        document.getElementById('emailAuthFail').innerText = "인증번호가 일치하지 않습니다."
+        document.getElementById('emailAuthPass').setAttribute("hidden", "true")
+
 
         document.getElementById('joinBtn').setAttribute("disabled", "true")
 
@@ -220,7 +239,6 @@
             document.getElementById('emailFail').innerText = "이메일에는 공백이 포함될 수 없습니다."
             document.getElementById('emailPass').setAttribute("hidden", "true")
             return
-
         }
 
         $.ajax({
@@ -233,7 +251,7 @@
                 if (res.result == true) {
                     document.getElementById('emailPass').removeAttribute("hidden")
                     document.getElementById('emailFail').setAttribute("hidden", "true")
-                    loginIdPass = true
+                    emailPass = true
                     check_all()
                 } else {
                     document.getElementById('emailFail').removeAttribute("hidden")
@@ -242,6 +260,96 @@
                 }
             }
         })
+    }
+
+    function check_email_auth() {
+        let inputEmailAuth = $("#emailAuth").val()
+        emailAuthPass = false
+
+        document.getElementById('joinBtn').setAttribute("disabled", "true")
+
+
+        // 글자수 체크 => 인증번호 8자리
+        if (inputEmailAuth.length != 8) {
+            document.getElementById('emailAuthFail').removeAttribute("hidden")
+            document.getElementById('emailAuthFail').innerText = "인증번호가 일치하지 않습니다."
+            document.getElementById('emailAuthPass').setAttribute("hidden", "true")
+            return
+        }
+
+        $.ajax({
+            type: 'GET',
+            url: '/api/users/check-email-auth',
+            data: {
+                email: $("#email").val(),
+                emailAuth: inputEmailAuth
+            },
+            success: function (res) {
+                if (res.result == true) {
+                    document.getElementById('emailAuthPass').removeAttribute("hidden")
+                    document.getElementById('emailAuthFail').setAttribute("hidden", "true")
+                    emailAuthPass = true
+                    check_all()
+                } else {
+                    document.getElementById('emailAuthFail').removeAttribute("hidden")
+                    document.getElementById('emailAuthFail').innerText = "인증번호가 일치하지 않습니다."
+                    document.getElementById('emailAuthPass').setAttribute("hidden", "true")
+                }
+            }
+        })
+    }
+
+    function send_email() {
+        if (!emailPass) {
+            alert("이메일이 올바르지 않습니다.")
+            return
+        }
+
+        $.ajax({
+            type: 'GET',
+            url: '/api/users/send-auth-email',
+            data: {
+                email: $("#email").val()
+            },
+            success: function (res) {
+                if (res.result == true) {
+                    alert("이메일이 발송되었습니다!")
+                    document.getElementById('emailAuthDiv').removeAttribute("hidden")
+                    start_timer()
+                } else {
+                    alert("이메일 발송에 실패하였습니다!")
+                }
+            }
+        })
+    }
+
+    function start_timer() {
+        let timerSpan = document.getElementById('timer')
+        timerSpan.style.cssText = 'color:whitesmoke';
+        timerSpan.style.float = 'right';
+        let timer_min = 5
+        let timer_sec = 0
+
+        let timer = setInterval(function () {
+
+            if (timer_sec > 0) {
+                timer_sec = timer_sec - 1
+                timerSpan.innerText = timer_min + ':' + timer_sec
+            } else if (timer_sec == 0) {
+                if (timer_min == 0) {
+                    timerSpan.innerText = '시간 초과'
+                    timerSpan.style.cssText = 'color:red';
+                    timerSpan.style.float = 'right';
+                    clearInterval(timer)
+                } else {
+                    timer_sec = 59
+                    timer_min = timer_min - 1
+                    timerSpan.innerText = timer_min + ':' + timer_sec
+                }
+            }
+            console.log(timer_min + ':' + timer_sec)
+
+        }, 1000)   // 1초마다
     }
 </script>
 

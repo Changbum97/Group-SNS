@@ -1,7 +1,10 @@
 spring:
-  # DB (접속정보 -> 환경변수)
+  # DB
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
+    #url -> 환경변수
+    #username -> 환경변수
+    #password -> 환경변수
 
   # JPA 설정
   jpa:
@@ -11,10 +14,11 @@ spring:
     hibernate:
       ddl-auto: create
 
-  # Redis 설정 (비밀번호 -> 환경변수)
+  # Redis 설정
   redis:
     host: ec2-52-79-82-151.ap-northeast-2.compute.amazonaws.com
     port: 6379
+    # password -> 환경변수
 
   # Swagger
   mvc:
@@ -64,3 +68,20 @@ jwt:
     access-token: 1800   # 30분 = 1800초
     refresh-token: 604800   # 7일 = 168시간 = 10080분 = 604800초
 
+# Email 인증
+mail:
+  smtp:
+    auth: true
+    port: 465
+    starttls:
+      required: true
+      enable: true
+    socketFactory:
+      class: javax.net.ssl.SSLSocketFactory
+      fallback: false
+      port: 465
+
+# admin 구글 계정
+AdminMail:
+  id: chb20050@gmail.com
+  # password -> 환경변수

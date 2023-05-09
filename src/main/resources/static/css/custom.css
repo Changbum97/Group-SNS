@@ -97,7 +97,7 @@ html, body {
 
 }
 
-.user-form>div>label {
+.user-form>div>label, .user-form>div>div>label {
     font-weight: bold;
 }
 

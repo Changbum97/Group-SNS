@@ -24,6 +24,7 @@ public class UserService {
     private final BCryptPasswordEncoder encoder;
     private final StringRedisTemplate stringRedisTemplate;
 
+
     @Value("${jwt.token.secret}")
     private String secretKey;
     @Value("${jwt.duration.access-token}")

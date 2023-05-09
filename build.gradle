@@ -42,6 +42,9 @@ dependencies {
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    // Email 인증
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
     // Oauth Login
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 

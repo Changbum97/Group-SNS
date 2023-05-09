@@ -9,6 +9,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import study.sns.domain.Response;
 import study.sns.domain.dto.user.*;
 import study.sns.domain.entity.User;
+import study.sns.service.EmailService;
 import study.sns.service.UserService;
 
 @RestController
@@ -18,6 +19,7 @@ import study.sns.service.UserService;
 public class UserApiController {
 
     private final UserService userService;
+    private final EmailService emailService;
 
     @PostMapping("/join")
     @ApiOperation(value = "회원가입")
@@ -65,6 +67,17 @@ public class UserApiController {
         return Response.success(pass);
     }
 
+    @GetMapping("/send-auth-email")
+    public Response<Boolean> sendEmail(@RequestParam String email) {
+        return Response.success(emailService.sendAuthEmail(email));
+    }
+
+    @GetMapping("/check-email-auth")
+    public Response<Boolean> checkEmailAuth(@RequestParam String email, @RequestParam String emailAuth) {
+        return Response.success(emailService.checkEmailAuth(email, emailAuth));
+    }
+
+
     @GetMapping("/access-token")
     @ApiOperation(value = "ACCESS-TOKEN 재발급", notes = "ACCESS-TOKEN이 만료된 경우 => REFRESH-TOKEN으로 재발급")
     public Response<String> getAccessTokenByRefreshToken(@ApiIgnore @CookieValue(name = "accessToken") String accessToken) {
@@ -79,4 +92,5 @@ public class UserApiController {
         User loginUser = userService.findByLoginId(auth.getName());
         return Response.success(UserDto.of(loginUser));
     }
+
 }
