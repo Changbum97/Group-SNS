@@ -68,15 +68,28 @@ public class UserApiController {
     }
 
     @GetMapping("/send-auth-email")
+    @ApiOperation(value = "이메일 인증번호 전송", notes = "true: 이메일 전송 성공")
     public Response<Boolean> sendEmail(@RequestParam String email) {
         return Response.success(emailService.sendAuthEmail(email));
     }
 
     @GetMapping("/check-email-auth")
+    @ApiOperation(value = "이메일 인증번호 검증", notes = "전송한 이메일과 전송받은 인증번호 입력")
     public Response<Boolean> checkEmailAuth(@RequestParam String email, @RequestParam String emailAuth) {
         return Response.success(emailService.checkEmailAuth(email, emailAuth));
     }
 
+    @GetMapping("/find-id")
+    @ApiOperation(value = "아이디 찾기", notes = "이메일로 아이디 전송")
+    public Response<Boolean> findId(@RequestParam String email) {
+        return Response.success(emailService.sendId(email));
+    }
+
+    @GetMapping("/find-pw")
+    @ApiOperation(value = "비밀번호 찾기", notes = "이메일로 새 비밀번호 전송")
+    public Response<Boolean> findPw(@RequestParam String email, @RequestParam String loginId) {
+        return Response.success(emailService.sendPw(email, loginId));
+    }
 
     @GetMapping("/access-token")
     @ApiOperation(value = "ACCESS-TOKEN 재발급", notes = "ACCESS-TOKEN이 만료된 경우 => REFRESH-TOKEN으로 재발급")

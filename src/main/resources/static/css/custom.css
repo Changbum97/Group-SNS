@@ -105,6 +105,53 @@ html, body {
     width: 300px;
 }
 
+.user-find-form {;
+    width: 300px;
+    height: max-content;
+    background-color: #333333;
+    border: solid 1px black;
+    border-radius: 30px;
+    padding: 30px;
+    color: whitesmoke;
+}
+
+.user-find-form>div {
+    text-align: left;
+}
+
+.user-find-form>div>label {
+    font-weight: bold;
+}
+
+.user-find-form>div>input {
+    width: 240px;
+}
+
+.user-find-btn {
+    height: 40px;
+    width: 150px;
+    font-size: large;
+    font-weight: bold;
+    margin-top: 35px;
+    background-color: whitesmoke;
+    color: #333333;
+    border: none;
+}
+
+.user-find-btn:hover {
+    color: #333333;
+    background-color: whitesmoke;
+    border: none;
+    animation: jelly 0.5s;
+}
+
+.user-find-btn:active:focus, .user-find-btn:focus {
+    color: #333333;
+    background-color: whitesmoke;
+    border: none;
+    filter: brightness(70%);
+}
+
 .user-div-pass {
     color: limegreen;
 }

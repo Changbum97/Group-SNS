@@ -27,6 +27,14 @@
   - 로그인 아이디 중복 체크 : GET /api/users/check-loginId
   - 닉네임 중복 체크 : GET /api/users/check-nickname
   - 이메일 중복 체크 : GET /api/users/check-email
+  - 이메일 인증번호 전송 : GET /api/users/send-auth-email
+    - 회원가입 시 이메일을 인증하기 위해 사용
+  - 이메일 인증번호 검증 : GET /api/users/check-email-auth
+    - 이메일 인증번호가 맞는지 체크
+  - 아이디 찾기 : GET /api/users/find-id
+    - 가입했던 이메일로 아이디 전송
+  - 비밀번호 찾기 : GET /api/users/find-pw
+    - 가입했던 이메일로 새로운 비밀번호 전송 및 유저 비밀번호 변경
   - Access Token 재발급 : GET /api/usrs/access-token
     - Refresh Token이 올바른 경우에만 Access Token 발급
   - 로그인 테스트 : GET /api/users/test

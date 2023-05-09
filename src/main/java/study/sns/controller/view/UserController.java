@@ -45,4 +45,9 @@ public class UserController {
 
         return "pages/users/nickname";
     }
+
+    @GetMapping("/find-id-pw")
+    public String findIdPwPage() {
+        return "pages/users/find-id-pw";
+    }
 }

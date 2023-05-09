@@ -48,7 +48,9 @@ public class SecurityConfig {
     private final CustomOauth2UserService customOauth2UserService;
 
     // 로그인하지 않은 유저들만 접근 가능한 URL
-    private static final String[] anonymousUserUrl = {"/users/login", "/users/join", "/api/users/login", "/api/users/join"};
+    private static final String[] anonymousUserUrl =
+            {"/users/login", "/users/join", "/api/users/login", "/api/users/join", "/api/users/check-email-auth",
+            "/api/users/send-auth-email", "/users/find-id-pw"};
 
     // 로그인한 유저들만 접근 가능한 URL
     private static final String[] authenticatedUserUrl =
@@ -76,8 +78,8 @@ public class SecurityConfig {
                         String uri = request.getRequestURI();
                         PrintWriter pw = response.getWriter();
 
-                        // 로그인 한 유저가 login, join을 시도한 경우
-                        if (uri.contains("login") || uri.contains("join")) {
+                        // 로그인 한 유저가 login, join, find-id-pw을 시도한 경우
+                        if (uri.contains("login") || uri.contains("join") || uri.contains("find-id-pw")) {
                             // 메세지 출력 후 홈으로 redirect
                             response.setContentType("text/html");
                             pw.println("<script>alert('이미 로그인 되어있습니다!'); location.href='/';</script>");

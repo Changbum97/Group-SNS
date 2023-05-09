@@ -38,4 +38,8 @@ public class User extends BaseEntity {
     public void setNickname(String newNickname) {
         this.nickname = newNickname;
     }
+
+    public void setNewPassword(String password) {
+        this.password = password;
+    }
 }

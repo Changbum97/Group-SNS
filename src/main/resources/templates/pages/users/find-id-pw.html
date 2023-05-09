@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"/>
+<body>
+    <div class="row" style="height: 100%">
+        <div align="center">
+            <br/>
+            <form class="form-group user-find-form">
+                <div>
+                    <label for="emailForId">이메일</label><br/>
+                    <input type="text" id="emailForId" name="emailForId"/>
+                </div>
+                <div style="text-align: center">
+                    <button id="findIdBtn" class="btn user-find-btn" type="button" onclick="find_id()">아이디 찾기</button>
+                </div>
+            </form>
+            <hr/>
+            <form class="form-group user-find-form">
+                <div>
+                    <label for="loginId">아이디</label><br/>
+                    <input type="text" id="loginId" name="loginId"/>
+                </div> <br/>
+                <div>
+                    <label for="emailForPw">이메일</label><br/>
+                    <input type="text" id="emailForPw" name="emailForPw"/>
+                </div>
+                <div style="text-align: center">
+                    <button id="findPwBtn" class="btn user-find-btn" type="button" onclick="find_pw()">비밀번호 찾기</button>
+                </div>
+            </form>
+            <button class="btn" type="button" style="border: solid 1px black; margin: 10px"
+                    onclick="window.close()">창닫기</button>
+        </div>
+    </div>
+</body>
+
+<script th:inline="javascript">
+
+    function find_id() {
+
+        $.ajax({
+            type: 'GET',
+            url: '/api/users/find-id',
+            data: {
+                email: $("#emailForId").val(),
+            },
+            success: function (res) {
+                if (res.result == true) {
+                    alert("이메일로 아이디를 전송했습니다!")
+                } else {
+                    alert("이메일 전송에 실패했습니다.")
+                }
+            }, error: function () {
+                alert("이메일이 존재하지 않습니다.")
+            }
+        })
+    }
+
+    function find_pw() {
+
+        $.ajax({
+            type: 'GET',
+            url: '/api/users/find-pw',
+            data: {
+                email: $("#emailForPw").val(),
+                loginId: $("#loginId").val(),
+            },
+            success: function (res) {
+                if (res.result == true) {
+                    alert("이메일로 새 비밀번호를 전송했습니다!")
+                } else {
+                    alert("이메일 전송에 실패했습니다.")
+                }
+            }, error: function () {
+                alert("이메일 혹은 아이디가 일치하지 않습니다.")
+            }
+        })
+    }
+</script>
+
+</html>

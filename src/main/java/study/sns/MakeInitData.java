@@ -33,7 +33,7 @@ public class MakeInitData {
                 .password(encoder.encode("1234"))
                 .nickname("지나가는행인")
                 .userRole(UserRole.USER)
-                .email("bbb@bbb")
+                .email("chb2005@naver.com")
                 .build();
 
         userRepository.save(user1);
