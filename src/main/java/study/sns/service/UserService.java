@@ -14,6 +14,7 @@ import study.sns.util.JwtTokenUtil;
 import study.sns.repository.UserRepository;
 
 import javax.transaction.Transactional;
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -64,7 +65,7 @@ public class UserService {
         stringRedisTemplate.delete(user.getLoginId() + "_refreshToken");
         ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
         stringStringValueOperations.set(user.getLoginId() + "_refreshToken", refreshToken,
-                refreshTokenDurationSec, TimeUnit.SECONDS);
+                Duration.ofSeconds(refreshTokenDurationSec));
 
         return UserLoginResponse.builder()
                 .accessToken(accessToken)

@@ -104,7 +104,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
                 // Refresh Token 검증
                 ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
-                if (!stringStringValueOperations.get(loginId + "_refreshToken").equals(token)) {
+                if (stringStringValueOperations.get(loginId + "_refreshToken") == null ||
+                        !stringStringValueOperations.get(loginId + "_refreshToken").equals(token)) {
                     throw new AppException(ErrorCode.INVALID_TOKEN);
                 }
 

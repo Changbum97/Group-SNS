@@ -179,6 +179,75 @@ html, body {
     animation: jelly 0.5s;
 }
 
+#calendar-table th {
+    color: whitesmoke;
+    text-align: center;
+    font-weight: bold;
+}
+
+#calendar-table td {
+    border-bottom: solid 1px black;
+}
+
+.calendar-td {
+    border: solid 1px black;
+    text-align: right;
+    padding-right: 20px;
+    height: 110px;
+}
+
+.calendar-red {
+    color: red;
+}
+
+.story-btn {
+    height: 40px;
+    width: 150px;
+    font-size: large;
+    font-weight: bold;
+    background-color: yellow;
+    color: #333333;
+    border: none;
+}
+
+.story-btn:hover {
+    color: #333333;
+    background-color: yellow;
+    border: none;
+    animation: jelly 0.5s;
+}
+
+.story-btn:active:focus, .story-btn:focus {
+    color: #333333;
+    background-color: yellow;
+    border: none;
+    filter: brightness(70%);
+}
+
+.calendar-btn {
+    height: 40px;
+    width: 40px;
+    font-size: large;
+    font-weight: bold;
+    margin-right: 10px;
+    background-color: #333333;
+    color: whitesmoke;
+    border: none;
+}
+
+.calendar-btn:hover {
+    color: whitesmoke;
+    background-color: #333333;
+    border: none;
+    animation: jelly 0.5s;
+}
+
+.calendar-btn:active:focus, .calendar-btn:focus {
+    color: whitesmoke;
+    background-color: #333333;
+    border: none;
+    filter: brightness(70%);
+}
 
 @keyframes jelly {
     25% {

@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
@@ -55,7 +56,7 @@ public class SecurityConfig {
     // 로그인한 유저들만 접근 가능한 URL
     private static final String[] authenticatedUserUrl =
             {"/api/users/logout", "/users/set-nickname", "/api/users/test", "/api/users/access-token",
-                    "/shops/**"};
+                    "/shops/**", "/groups/**", "/calendars/**"};
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, HttpServletResponse response) throws Exception {
@@ -136,7 +137,7 @@ public class SecurityConfig {
                                     stringRedisTemplate.delete(userDetail.getUsername() + "_refreshToken");
                                     ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
                                     stringStringValueOperations.set(userDetail.getUsername() + "_refreshToken", refreshToken,
-                                            refreshTokenDurationSec, TimeUnit.SECONDS);
+                                            Duration.ofSeconds(refreshTokenDurationSec));
 
                                     PrintWriter pw = response.getWriter();
                                     if (userDetail.getNickname().equals("")) {

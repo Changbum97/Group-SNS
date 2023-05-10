@@ -17,6 +17,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
+import java.time.Duration;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -37,7 +38,7 @@ public class EmailService {
             stringRedisTemplate.delete(email + "_authCode");
             ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
             stringStringValueOperations.set(email + "_authCode", authCode,
-                    60 * 6, TimeUnit.SECONDS);   // 6분간 저장
+                    Duration.ofSeconds(360));   // 6분간 저장
 
             sendEmail(email, "Our Story 회원가입 이메일 인증", "회원가입 인증 코드입니다.", "CODE", authCode);
             return true;
