@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko"  xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"/>
+<body>
+<div class="row" style="height: 100%">
+  <div th:replace="fragments/header.html :: side-bar" />
+  <div class="col-10" style="display: flex; justify-content: center; align-items: center;">
+    <form class="form-group user-form" th:object="${groupRequest}" id="groupRequest" align="left">
+      <div align="center">
+        <h1>그룹 참여</h1>
+        <hr/> <br/>
+      </div>
+      <div>
+        <label th:for="name">그룹명</label><br/>
+        <input type="text" th:field="*{name}" id="name" placeholder="그룹명을 입력해주세요."/>
+      </div>
+      <br/>
+      <div>
+        <label th:for="enterCode">입장 코드</label><br/>
+        <input type="text" th:field="*{enterCode}" id="enterCode" placeholder="입장 코드를 입력해주세요."/>
+      </div>
+      <br/>
+      <div align="center">
+        <button id="addBtn" class="btn user-btn" type="button" onclick="join_group()">참여</button>
+        <button class="btn user-btn" type="button" onclick="location.href='/groups'" style="margin-left: 20px">취소</button>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+
+<script th:inline="javascript">
+  function join_group() {
+    $.ajax({
+      type: 'GET',
+      url: '/api/groups/join',
+      data: $('#groupRequest').serialize(),
+      success: function (res) {
+        alert('그룹에 참여하였습니다.')
+        location.href='/groups'
+      }, error: function (res) {
+        let message = res.responseJSON.result.message
+        alert(message)
+        if (!message.includes('코드') && !message.includes('존재')) {
+          location.href='/groups'
+        }
+      }
+    })
+  }
+</script>
+
+</html>

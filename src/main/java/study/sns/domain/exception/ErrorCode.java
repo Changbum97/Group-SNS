@@ -24,6 +24,9 @@ public enum ErrorCode {
     DUPLICATED_GROUP_NAME(HttpStatus.CONFLICT, "그룹명이 중복됩니다."),
     INVALID_GROUP_NAME(HttpStatus.BAD_REQUEST, "그룹명이 올바르지 않습니다."),
     INVALID_ENTER_CODE(HttpStatus.BAD_REQUEST, "입장 코드가 올바르지 않습니다."),
+    MAX_GROUP(HttpStatus.BAD_REQUEST, "더 이상 그룹에 참여할 수 없습니다."),
+    GROUP_NOT_FOUND(HttpStatus.NOT_FOUND, "그룹이 존재하지 않습니다."),
+    ALREADY_JOIN_GROUP(HttpStatus.BAD_REQUEST, "이미 참여한 그룹입니다")
     ;
 
     private HttpStatus status;

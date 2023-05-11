@@ -12,7 +12,7 @@ import java.util.ArrayList;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GroupAddRequest {
+public class GroupRequest {
 
     private String name;
     private String enterCode;

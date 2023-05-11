@@ -5,7 +5,7 @@
 <div class="row" style="height: 100%">
   <div th:replace="fragments/header.html :: side-bar" />
   <div class="col-10" style="display: flex; justify-content: center; align-items: center;">
-    <form class="form-group user-form" th:object="${groupAddRequest}" id="groupAddRequest" align="left">
+    <form class="form-group user-form" th:object="${groupRequest}" id="groupRequest" align="left">
       <div align="center">
         <h1>그룹 생성</h1>
         <hr/> <br/>
@@ -42,11 +42,14 @@
     $.ajax({
       type: 'POST',
       url: '/api/groups',
-      data: $('#groupAddRequest').serialize(),
-      success: function (res) {
+      data: $('#groupRequest').serialize(),
+      success: function () {
         alert('그룹이 생성되었습니다.')
         location.href='/groups'
-      },
+      }, error: function (res) {
+        alert(res.responseJSON.result.message)
+        location.href='/groups'
+      }
     })
   }
 
@@ -58,7 +61,6 @@
 
   function check_name() {
     let inputName = $("#name").val()
-    console.log(inputName)
     namePass = false
 
     document.getElementById('addBtn').setAttribute("disabled", "true")
@@ -107,7 +109,6 @@
 
   function check_enterCode() {
     let inputEnterCode = $("#enterCode").val()
-    console.log(inputEnterCode)
     enterCodePass = false
 
     document.getElementById('addBtn').setAttribute("disabled", "true")

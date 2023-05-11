@@ -46,7 +46,7 @@
                 setCookie("refreshToken", res.result.refreshToken)
                 alert(res.result.nickname + '님 반갑습니다!')
                 location.href='/'
-            }, error: function (res) {
+            }, error: function () {
                 alert('아이디 혹은 비밀번호가 일치하지 않습니다.')
             }
         })
