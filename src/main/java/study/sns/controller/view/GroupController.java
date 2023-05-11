@@ -1,6 +1,7 @@
 package study.sns.controller.view;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -20,16 +21,16 @@ public class GroupController {
     private final GroupService groupService;
 
     @GetMapping("")
-    public String groupMainPage(@CookieValue(name = "accessToken") String accessToken, Model model) {
-        User user = userService.findByAccessToken(accessToken);
+    public String groupMainPage(Authentication auth, Model model) {
+        User user = userService.findByLoginId(auth.getName());
         model.addAttribute("user", user);
         model.addAttribute("groupList", groupService.getGroupList(user.getLoginId()));
         return "pages/groups/list";
     }
 
     @GetMapping("/add")
-    public String groupNewPage(@CookieValue(name = "accessToken") String accessToken, Model model) {
-        model.addAttribute("user", userService.findByAccessToken(accessToken));
+    public String groupNewPage(Authentication auth, Model model) {
+        model.addAttribute("user", userService.findByLoginId(auth.getName()));
         model.addAttribute("groupAddRequest", new GroupAddRequest());
         return "pages/groups/add";
     }

@@ -102,7 +102,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 String loginId = JwtTokenUtil.getLoginId(token, secretKey);
                 User loginUser = userService.findByLoginId(loginId);
 
-                // Refresh Token 검증
+                // Refresh Token이 Redis에 있는지 검증
                 ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
                 if (stringStringValueOperations.get(loginId + "_refreshToken") == null ||
                         !stringStringValueOperations.get(loginId + "_refreshToken").equals(token)) {

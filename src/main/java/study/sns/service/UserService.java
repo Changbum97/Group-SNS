@@ -13,6 +13,7 @@ import study.sns.domain.exception.ErrorCode;
 import study.sns.util.JwtTokenUtil;
 import study.sns.repository.UserRepository;
 
+import javax.servlet.http.Cookie;
 import javax.transaction.Transactional;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
@@ -82,6 +83,31 @@ public class UserService {
         User user = findByLoginId(loginId);
         user.setNickname(nickname);
         return nickname;
+    }
+
+    public String reissueAccessToken(String refreshToken) {
+        if (!refreshToken.startsWith("Bearer ")) {
+            throw new AppException(ErrorCode.INVALID_TOKEN);
+        }
+
+        String token = refreshToken.split(" ")[1];
+        if (JwtTokenUtil.isExpired(token, secretKey)) {
+            throw new AppException(ErrorCode.TOKEN_EXPIRED);
+        }
+
+        String loginId = JwtTokenUtil.getLoginId(token, secretKey);
+        User loginUser = findByLoginId(loginId);
+
+        // Refresh Token이 Redis에 있는지 검증
+        ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
+        if (stringStringValueOperations.get(loginId + "_refreshToken") == null ||
+                !stringStringValueOperations.get(loginId + "_refreshToken").equals(token)) {
+
+            throw new AppException(ErrorCode.INVALID_TOKEN);
+        }
+
+        // Refresh Token이 유효하면 Access Token을 다시 생성
+        return JwtTokenUtil.createToken(loginId, secretKey, accessTokenDurationSec * 1000);
     }
 
     public Boolean checkLoginId(String loginId) {

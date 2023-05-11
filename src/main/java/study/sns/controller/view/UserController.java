@@ -2,6 +2,7 @@ package study.sns.controller.view;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -34,8 +35,8 @@ public class UserController {
     }
 
     @GetMapping("/set-nickname")
-    public String setNicknamePage(@CookieValue(name = "accessToken") String accessToken, Model model) {
-        String nickname = userService.findByAccessToken(accessToken).getNickname();
+    public String setNicknamePage(Authentication auth, Model model) {
+        String nickname = userService.findByLoginId(auth.getName()).getNickname();
 
         if (!nickname.equals("")) {
             model.addAttribute("message", "닉네임이 설정되어 있습니다!");

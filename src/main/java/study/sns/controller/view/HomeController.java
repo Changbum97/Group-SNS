@@ -2,6 +2,7 @@ package study.sns.controller.view;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -19,10 +20,9 @@ public class HomeController {
     private final UserService userService;
 
     @GetMapping(value = {"", "/", "/home"})
-    public String home(@CookieValue(name = "accessToken", required = false) String accessToken,
-                       Model model) {
-        if (accessToken != null) {
-            model.addAttribute("nickname", userService.findByAccessToken(accessToken).getNickname());
+    public String home(Authentication auth, Model model) {
+        if (auth != null) {
+            model.addAttribute("nickname", userService.findByLoginId(auth.getName()).getNickname());
         }
         return "pages/home";
     }

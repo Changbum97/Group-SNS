@@ -1,6 +1,7 @@
 package study.sns.controller.api;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -92,11 +93,10 @@ public class UserApiController {
     }
 
     @GetMapping("/access-token")
-    @ApiOperation(value = "ACCESS-TOKEN 재발급", notes = "ACCESS-TOKEN이 만료된 경우 => REFRESH-TOKEN으로 재발급")
-    public Response<String> getAccessTokenByRefreshToken(@RequestParam String accessToken) {
-        // Access Token이 만료되거나 없는데 Refresh Token이 유효하다면 JwtTokenFilter에서 Cookie에 Access Token을 넣어줌
-        // 쿠키에서 Access Token을 추출해 String으로 return
-        return Response.success(accessToken);
+    @ApiOperation(value = "ACCESS-TOKEN 재발급", notes = "REFRESH-TOKEN이 유효하다면 ACCESS-TOKEN 재발급")
+    @ApiImplicitParam(name = "refreshToken", value = "'Bearer ' + token 형식으로 입력")
+    public Response<String> reissueAccessToken(@RequestParam String refreshToken) {
+        return Response.success(userService.reissueAccessToken(refreshToken));
     }
 
     @GetMapping("/test")
