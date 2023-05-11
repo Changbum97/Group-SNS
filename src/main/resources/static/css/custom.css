@@ -179,13 +179,13 @@ html, body {
     animation: jelly 0.5s;
 }
 
-#calendar-table th {
+.calendar-table th {
     color: whitesmoke;
     text-align: center;
     font-weight: bold;
 }
 
-#calendar-table td {
+.calendar-table td {
     border-bottom: solid 1px black;
 }
 
@@ -247,6 +247,16 @@ html, body {
     background-color: #333333;
     border: none;
     filter: brightness(70%);
+}
+
+.group-table th {
+    color: whitesmoke;
+    text-align: center;
+    font-weight: bold;
+}
+
+.group-table td {
+    text-align: center;
 }
 
 @keyframes jelly {

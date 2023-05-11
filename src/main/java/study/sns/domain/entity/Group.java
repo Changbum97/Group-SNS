@@ -1,9 +1,6 @@
 package study.sns.domain.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import study.sns.domain.BaseEntity;
 
 import javax.persistence.*;
@@ -14,16 +11,19 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "\"group\"")
 public class Group extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String groupId;
     private String name;
-    private String password;
+    private String enterCode;
 
     @OneToMany(mappedBy = "group")
-    private List<User> users;
+    private List<UserGroup> userGroups;
 
+    public void addUser(UserGroup userGroup) {
+        userGroups.add(userGroup);
+    }
 }

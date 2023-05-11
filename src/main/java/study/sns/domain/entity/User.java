@@ -1,13 +1,11 @@
 package study.sns.domain.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import study.sns.domain.BaseEntity;
 import study.sns.domain.dto.user.UserRole;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -31,9 +29,8 @@ public class User extends BaseEntity {
     private String provider;
     private String providerId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id")
-    private Group group;
+    @OneToMany(mappedBy = "user")
+    private List<UserGroup> userGroups;
 
     public void setNickname(String newNickname) {
         this.nickname = newNickname;
@@ -41,5 +38,9 @@ public class User extends BaseEntity {
 
     public void setNewPassword(String password) {
         this.password = password;
+    }
+
+    public void addGroup(UserGroup userGroup) {
+        userGroups.add(userGroup);
     }
 }

@@ -93,7 +93,7 @@ public class UserApiController {
 
     @GetMapping("/access-token")
     @ApiOperation(value = "ACCESS-TOKEN 재발급", notes = "ACCESS-TOKEN이 만료된 경우 => REFRESH-TOKEN으로 재발급")
-    public Response<String> getAccessTokenByRefreshToken(@ApiIgnore @CookieValue(name = "accessToken") String accessToken) {
+    public Response<String> getAccessTokenByRefreshToken(@RequestParam String accessToken) {
         // Access Token이 만료되거나 없는데 Refresh Token이 유효하다면 JwtTokenFilter에서 Cookie에 Access Token을 넣어줌
         // 쿠키에서 Access Token을 추출해 String으로 return
         return Response.success(accessToken);

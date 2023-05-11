@@ -8,27 +8,27 @@
     <br/> <div class="d-flex  justify-content-between">
       <h2>My Group List</h2>
       <div>
-        <button class="btn story-btn" type="button">그룹 추가</button>
-        <button class="btn story-btn" type="button">그룹 참여</button>
+        <button class="btn story-btn" type="button" onclick="location.href='/groups/add'">그룹 생성</button>
+        <button class="btn story-btn" type="button" onclick="location.href='/groups/join'">그룹 참여</button>
       </div>
     </div> <br/>
     <table class="table group-table">
       <thead style="background-color: #333333">
         <tr>
-          <th style="width: 30%">그룹 ID</th>
           <th style="width: 30%">그룹명</th>
-          <th style="width: 10%">그룹원 수</th>
-          <th style="width: 10%">게시글 수</th>
-          <th style="width: 20%">입장번호</th>
+          <th style="width: 20%">입장 코드</th>
+          <th style="width: 15%">그룹원 수</th>
+          <th style="width: 15%">게시글 수</th>
+          <th style="width: 20%">그룹 생성일</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td style="width: 30%">abcdefdf-1231023-213klnc</td>
-          <td style="width: 30%">가족</td>
-          <td style="width: 10%">20명</td>
-          <td style="width: 10%">20개</td>
-          <td style="width: 20%">abcdefg1234</td>
+        <tr th:each="group : ${groupList}">
+          <td style="width: 30%" th:text="${group.name}"></td>
+          <td style="width: 20%" th:text="${group.enterCode}"></td>
+          <td style="width: 15%" th:text="${group.memberCount}"></td>
+          <td style="width: 15%" th:text="${group.storyCount}"></td>
+          <td style="width: 20%" th:text="${group.createdAt}"></td>
         </tr>
       </tbody>
     </table>

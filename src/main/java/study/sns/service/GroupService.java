@@ -1,114 +1,73 @@
 package study.sns.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import study.sns.domain.dto.user.*;
+import study.sns.domain.dto.group.GroupAddRequest;
+import study.sns.domain.dto.group.GroupDto;
+import study.sns.domain.entity.Group;
 import study.sns.domain.entity.User;
+import study.sns.domain.entity.UserGroup;
 import study.sns.domain.exception.AppException;
 import study.sns.domain.exception.ErrorCode;
-import study.sns.util.JwtTokenUtil;
-import study.sns.repository.UserRepository;
+import study.sns.repository.GroupRepository;
+import study.sns.repository.UserGroupRepository;
 
 import javax.transaction.Transactional;
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class GroupService {
 
-    private final UserRepository userRepository;
-    private final BCryptPasswordEncoder encoder;
-    private final StringRedisTemplate stringRedisTemplate;
-
-
-    @Value("${jwt.token.secret}")
-    private String secretKey;
-    @Value("${jwt.duration.access-token}")
-    private Long accessTokenDurationSec;
-    @Value("${jwt.duration.refresh-token}")
-    private Long refreshTokenDurationSec;
-
-    public UserDto saveUser(UserJoinRequest req) {
-        if (req.getLoginId() == null || req.getNickname() == null || req.getPassword() == null || req.getEmail() == null) {
-            throw new AppException(ErrorCode.BAD_REQUEST, "Null일 수 없습니다.");
-        } else if (!checkLoginId(req.getLoginId())) {
-            throw new AppException(ErrorCode.DUPLICATED_LOGIN_ID);
-        } else if (!checkNickname(req.getNickname())) {
-            throw new AppException(ErrorCode.DUPLICATED_NICKNAME);
-        } else if (!checkEmail(req.getEmail())) {
-            throw new AppException(ErrorCode.DUPLICATED_EMAIL);
-        } else if (!req.getEmail().contains("@") || !req.getEmail().contains(".")) {
-            throw new AppException(ErrorCode.BAD_REQUEST, "Email 형식이 아닙니다.");
-        }
-
-        User savedUser = userRepository.save( req.toEntity(encoder.encode(req.getPassword()), UserRole.USER) );
-        return UserDto.of(savedUser);
-    }
-
-    public UserLoginResponse login(UserLoginRequest req) {
-        User user = findByLoginId(req.getLoginId());
-
-        if (!encoder.matches(req.getPassword(), user.getPassword())) {
-            throw new AppException(ErrorCode.WRONG_PASSWORD);
-        }
-
-        // JWT Token 발급
-        String accessToken = JwtTokenUtil.createToken(user.getLoginId(), secretKey, accessTokenDurationSec * 1000);
-        String refreshToken = JwtTokenUtil.createToken(user.getLoginId(), secretKey, refreshTokenDurationSec * 1000);
-
-        // Redis에 Refresh Token 저장
-        stringRedisTemplate.delete(user.getLoginId() + "_refreshToken");
-        ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
-        stringStringValueOperations.set(user.getLoginId() + "_refreshToken", refreshToken,
-                Duration.ofSeconds(refreshTokenDurationSec));
-
-        return UserLoginResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .nickname(user.getNickname())
-                .build();
-    }
-
-    public void logout(String loginId) {
-        stringRedisTemplate.delete(loginId + "_refreshToken");
-    }
+    private final GroupRepository groupRepository;
+    private final UserGroupRepository userGroupRepository;
+    private final UserService userService;
 
     @Transactional
-    public String setNickname(String nickname, String accessToken) {
-        if (!checkNickname(nickname)) {
-            throw new AppException(ErrorCode.DUPLICATED_NICKNAME);
+    public GroupDto addGroup(GroupAddRequest req, String loginId) {
+
+        User loginUser = null;
+
+        try {
+            loginUser = userService.findByLoginId(loginId);
+            groupAddRequestCheck(req);
+        } catch (AppException e) {
+            throw e;
         }
 
-        String loginId = JwtTokenUtil.getLoginId(accessToken, secretKey);
-        User user = findByLoginId(loginId);
-        user.setNickname(nickname);
-        return nickname;
+        Group savedGroup = groupRepository.save( req.toEntity() );
+        UserGroup savedUserGroup = userGroupRepository.save( new UserGroup(loginUser, savedGroup) );
+        savedGroup.addUser(savedUserGroup);
+        return GroupDto.of(savedGroup);
     }
 
-    public Boolean checkLoginId(String loginId) {
-        return !userRepository.existsByLoginId(loginId);
+    public List<GroupDto> getGroupList(String loginId ) {
+        User user = userService.findByLoginId(loginId);
+
+        List<UserGroup> userGroups = user.getUserGroups();
+        List<GroupDto> groupDtos = new ArrayList<>();
+
+        for (UserGroup userGroup : userGroups) {
+            groupDtos.add(GroupDto.of(userGroup.getGroup()));
+        }
+        return groupDtos;
     }
 
-    public Boolean checkNickname(String nickname) {
-        return !userRepository.existsByNickname(nickname);
+    public Boolean checkName(String name) {
+        return !groupRepository.existsByName(name);
     }
 
-    public Boolean checkEmail(String email) {
-        return !userRepository.existsByEmail(email);
-    }
-
-    public User findByLoginId(String loginId) {
-        return userRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-    }
-
-    public User findByAccessToken(String accessToken) {
-        String loginId = JwtTokenUtil.getLoginId(accessToken, secretKey);
-        return findByLoginId(loginId);
+    private void groupAddRequestCheck(GroupAddRequest req) {
+        if (req.getName() == null || req.getEnterCode() == null) {
+            throw new AppException(ErrorCode.NOT_NULL);
+        } else if (!checkName(req.getName())) {
+            throw new AppException(ErrorCode.DUPLICATED_GROUP_NAME);
+        } else if (req.getName().length() < 2 || req.getName().length() > 15 || req.getName().contains(" ")) {
+            throw new AppException(ErrorCode.INVALID_GROUP_NAME);
+        } else if (req.getEnterCode().length() < 5 || req.getEnterCode().length() > 20 ||
+                    req.getEnterCode().contains(" ") || req.getEnterCode().matches(".*[ㄱ-ㅎㅏ-ㅣ가-힣]+.*")) {
+            throw new AppException(ErrorCode.INVALID_ENTER_CODE);
+        }
     }
 }
