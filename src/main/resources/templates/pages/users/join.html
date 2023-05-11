@@ -6,6 +6,10 @@
         <div th:replace="fragments/header.html :: side-bar" />
         <div class="col-10" style="display: flex; justify-content: center; align-items: center;">
             <form class="form-group user-form" th:object="${userJoinRequest}" id="userJoinRequest" align="left">
+                <div align="center">
+                    <h1>회원가입</h1>
+                    <hr/> <br/>
+                </div>
                 <div>
                     <label th:for="loginId">아이디</label><br/>
                     <input type="text" th:field="*{loginId}" oninput="check_loginId()"

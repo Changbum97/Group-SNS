@@ -34,10 +34,16 @@ public class UserService {
     private Long refreshTokenDurationSec;
 
     public UserDto saveUser(UserJoinRequest req) {
-        try {
-            userJoinRequestCheck(req);
-        } catch (AppException e) {
-            throw e;
+        if (req.getLoginId() == null || req.getNickname() == null || req.getPassword() == null || req.getEmail() == null) {
+            throw new AppException(ErrorCode.BAD_REQUEST, "Null일 수 없습니다.");
+        } else if (!checkLoginId(req.getLoginId())) {
+            throw new AppException(ErrorCode.DUPLICATED_LOGIN_ID);
+        } else if (!checkNickname(req.getNickname())) {
+            throw new AppException(ErrorCode.DUPLICATED_NICKNAME);
+        } else if (!checkEmail(req.getEmail())) {
+            throw new AppException(ErrorCode.DUPLICATED_EMAIL);
+        } else if (!req.getEmail().contains("@") || !req.getEmail().contains(".")) {
+            throw new AppException(ErrorCode.BAD_REQUEST, "Email 형식이 아닙니다.");
         }
 
         User savedUser = userRepository.save( req.toEntity(encoder.encode(req.getPassword()), UserRole.USER) );
@@ -104,25 +110,5 @@ public class UserService {
     public User findByAccessToken(String accessToken) {
         String loginId = JwtTokenUtil.getLoginId(accessToken, secretKey);
         return findByLoginId(loginId);
-    }
-
-    private void userJoinRequestCheck(UserJoinRequest req) {
-        if (req.getLoginId() == null || req.getNickname() == null || req.getPassword() == null || req.getEmail() == null) {
-            throw new AppException(ErrorCode.NOT_NULL);
-        } else if (!checkLoginId(req.getLoginId())) {
-            throw new AppException(ErrorCode.DUPLICATED_LOGIN_ID);
-        } else if (!checkNickname(req.getNickname())) {
-            throw new AppException(ErrorCode.DUPLICATED_NICKNAME);
-        } else if (!checkEmail(req.getEmail())) {
-            throw new AppException(ErrorCode.DUPLICATED_EMAIL);
-        } else if (req.getLoginId().matches(".*[ㄱ-ㅎㅏ-ㅣ가-힣]+.*") || req.getLoginId().matches("[^a-zA-Z0-9]") ||
-                req.getLoginId().length() < 3 || req.getLoginId().length() > 10) {
-            throw new AppException(ErrorCode.INVALID_LOGIN_ID);
-        } else if (req.getNickname().contains(" ") || req.getNickname().length() < 3 || req.getNickname().length() > 10) {
-            throw new AppException(ErrorCode.INVALID_NICKNAME);
-        } else if (!req.getEmail().contains("@") || !req.getEmail().contains(".") || req.getEmail().contains(" ") ||
-                req.getEmail().matches(".*[ㄱ-ㅎㅏ-ㅣ가-힣]+.*")) {
-            throw new AppException(ErrorCode.INVALID_EMAIL);
-        }
     }
 }

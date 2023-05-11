@@ -106,6 +106,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
                 if (stringStringValueOperations.get(loginId + "_refreshToken") == null ||
                         !stringStringValueOperations.get(loginId + "_refreshToken").equals(token)) {
+
+                    Cookie cookie2 = new Cookie("refreshToken", null);
+                    cookie2.setMaxAge(0);
+                    cookie2.setPath("/");
+                    response.addCookie(cookie2);
+
                     throw new AppException(ErrorCode.INVALID_TOKEN);
                 }
 
