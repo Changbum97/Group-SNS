@@ -2,6 +2,7 @@ package study.sns.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import study.sns.domain.dto.group.GroupDetailResponse;
 import study.sns.domain.dto.group.GroupRequest;
 import study.sns.domain.dto.group.GroupDto;
 import study.sns.domain.entity.Group;
@@ -73,14 +74,31 @@ public class GroupService {
 
     public List<GroupDto> getGroupList(String loginId ) {
         User user = userService.findByLoginId(loginId);
-
-        List<UserGroup> userGroups = user.getUserGroups();
         List<GroupDto> groupDtos = new ArrayList<>();
 
-        for (UserGroup userGroup : userGroups) {
+        for (UserGroup userGroup : user.getUserGroups()) {
             groupDtos.add(GroupDto.of(userGroup.getGroup()));
         }
         return groupDtos;
+    }
+
+    public GroupDetailResponse getGroupDetail(Long groupId, String loginId) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new AppException(ErrorCode.GROUP_NOT_FOUND));
+
+        // 로그인한 유저가 그룹에 있는지 체크
+        boolean check = false;
+        for (UserGroup userGroup : group.getUserGroups()) {
+            if (userGroup.getUser().getLoginId().equals(loginId)) {
+                check = true;
+            }
+        }
+        // 로그인한 유저가 그룹원이 아니라면 에러 발생
+        if (check == false) {
+            throw new AppException(ErrorCode.INVALID_PERMISSION);
+        }
+
+        return GroupDetailResponse.of(group);
     }
 
     public Boolean checkName(String name) {

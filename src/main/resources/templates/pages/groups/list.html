@@ -12,7 +12,7 @@
         <button class="btn story-btn" type="button" onclick="location.href='/groups/join'">그룹 참여</button>
       </div>
     </div> <br/>
-    <table class="table group-table">
+    <table class="table group-table table-hover">
       <thead style="background-color: #333333">
         <tr>
           <th style="width: 30%">그룹명</th>
@@ -23,7 +23,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr th:each="group : ${groupList}">
+        <tr th:each="group : ${groupList}" th:onclick="|location.href='@{/groups/{groupId} (groupId=${group.id})}'|">
           <td style="width: 30%" th:text="${group.name}"></td>
           <td style="width: 20%" th:text="${group.enterCode}"></td>
           <td style="width: 15%" th:text="${group.memberCount}"></td>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko"  xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"/>
+<body>
+<div class="row" style="height: 100%">
+  <div th:replace="fragments/header.html :: side-bar" />
+  <div class="col-9">
+    <br/> <h2>그룹 정보</h2> <br/>
+    <h3>그룹명 : [[${groupDetail.name}]]</h3>
+    <h3>입장코드 : [[${groupDetail.enterCode}]]</h3>
+    <h3>게시글 수 : [[${groupDetail.storyCount}]] 개</h3>
+    <h3>그룹원 수 : [[${groupDetail.userGroupDtos.size()}]] 명</h3>
+    <h3>그룹 생성일 : [[${groupDetail.createdAt}]]</h3><br/>
+
+    <table class="table group-table table-hover">
+      <thead style="background-color: #333333">
+      <tr>
+        <th style="width: 30%">닉네임</th>
+        <th style="width: 20%">권한</th>
+        <th style="width: 15%">게시글 수</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="dto : ${groupDetail.userGroupDtos}">
+        <td style="width: 30%" th:text="${dto.nickname}"></td>
+        <td style="width: 20%" th:text="${dto.userRole}"></td>
+        <td style="width: 15%" th:text="${dto.groupStoryCount}"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

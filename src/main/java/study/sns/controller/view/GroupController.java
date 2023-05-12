@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import study.sns.domain.dto.group.GroupRequest;
 import study.sns.domain.entity.User;
@@ -36,5 +37,11 @@ public class GroupController {
     public String groupJoinPage(Model model) {
         model.addAttribute("groupRequest", new GroupRequest());
         return "pages/groups/join";
+    }
+
+    @GetMapping("/{groupId}")
+    public String groupDetail(@PathVariable Long groupId, Authentication auth, Model model) {
+        model.addAttribute("groupDetail", groupService.getGroupDetail(groupId, auth.getName()));
+        return "pages/groups/detail";
     }
 }
