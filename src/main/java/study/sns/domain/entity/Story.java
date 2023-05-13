@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import study.sns.domain.enum_class.StoryScope;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -21,6 +22,7 @@ public class Story {
 
     private String title;
     private String body;
+    private LocalDate date;
 
     @Enumerated(EnumType.STRING)
     private StoryScope scope;

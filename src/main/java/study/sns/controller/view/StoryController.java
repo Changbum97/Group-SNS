@@ -19,7 +19,6 @@ public class StoryController {
 
     private final GroupService groupService;
 
-
     @GetMapping("/add")
     public String storyAddPage(Model model, Authentication auth) {
         List<GroupDto> groupDtos = groupService.getGroupList(auth.getName());

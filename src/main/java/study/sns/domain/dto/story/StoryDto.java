@@ -1,16 +1,16 @@
 package study.sns.domain.dto.story;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import study.sns.domain.entity.Story;
 import study.sns.domain.entity.UploadImage;
 import study.sns.domain.enum_class.StoryScope;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class StoryDto {
@@ -19,8 +19,21 @@ public class StoryDto {
     private String title;
     private String body;
     private StoryScope scope;
+    private LocalDate date;
     private List<UploadImage> uploadImages;
 
     private Long userId;
     private Long groupId;
+
+    public static StoryDto of(Story story) {
+        return StoryDto.builder()
+                .id(story.getId())
+                .title(story.getTitle())
+                .body(story.getBody())
+                .scope(story.getScope())
+                .date(story.getDate())
+                .userId(story.getUserGroup().getUser().getId())
+                .groupId(story.getUserGroup().getGroup().getId())
+                .build();
+    }
 }

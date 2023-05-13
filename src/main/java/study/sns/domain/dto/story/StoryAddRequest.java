@@ -1,9 +1,8 @@
 package study.sns.domain.dto.story;
 
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -12,10 +11,9 @@ import java.util.List;
 @ToString
 public class StoryAddRequest {
 
-    private String group;
+    private String groupName;
     private String title;
     private String body;
     private String scope;
-    private List<MultipartFile> images;
-
+    private LocalDate date;
 }

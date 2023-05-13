@@ -9,30 +9,34 @@
     <form class="form-group story-form" th:object="${storyAddRequest}" id="storyAddRequest" align="left">
       <h1>스토리 추가</h1><hr/>
       <div>
-        <label th:for="group">그룹 선택</label><br/>
-        <select th:field="*{group}" style="height: 40px; width: 300px;">
+        <label th:for="groupName">그룹 선택</label><br/>
+        <select th:field="*{groupName}" style="height: 30px; width: 300px;">
           <option th:each="group : ${groups}" th:text="${group.name}" th:value="${group.name}"></option>
         </select>
       </div>
       <br/>
       <div>
+        <label th:for="date">날짜</label>
+        <input type="date" th:field="*{date}" />
+      </div>
+      <div>
         <label th:for="title">제목</label><br/>
-        <input type="text" th:field="*{title}" id="title" style="width: 300px"/>
+        <input type="text" th:field="*{title}" style="width: 300px"/>
       </div>
       <br/>
       <div>
         <label th:for="body">내용</label><br/>
-        <textarea rows="3" style="width: 500px;" th:field="*{body}" id="body"/>
+        <textarea rows="3" style="width: 500px;" th:field="*{body}"/>
       </div>
       <br/>
       <div>
-        <label th:for="images">사진 첨부(최대 5개)</label><br/>
-        <input type="file" th:field="*{images}" id="images" multiple="multiple"/>
+        <label th:for="images">사진 첨부(최대 5개, 개당 10MB 제한)</label><br/>
+        <input type="file" id="images" multiple="multiple"/>
       </div>
       <br/>
       <div>
-        <input type="radio" name="scope" value="PUBLIC" checked> 공개
-        <input type="radio" name="scope" value="PRIVATE" style="margin-left: 10px"> 비공개
+        <input type="radio" name="scope" value="PUBLIC" checked><label>공개</label>
+        <input type="radio" name="scope" value="PRIVATE" style="margin-left: 10px"><label>비공개</label>
       </div>
       <br/><br/>
       <div align="center">
@@ -45,14 +49,37 @@
 </body>
 
 <script th:inline="javascript">
-  let namePass, enterCodePass = false
+
+  window.onload = function () {
+    document.getElementById('date').value = new Date().toISOString().substring(0, 10)
+  }
 
   function add_story() {
+
+    let storyAddRequest = {
+      groupName : $("#groupName").val(),
+      title : $("#title").val(),
+      body : $("#body").val(),
+      scope : $("input[name='scope']:checked").val(),
+      date: $("#date").val()
+    }
+
+    let formData = new FormData()
+    for (var i = 0; i < document.getElementById('images').files.length; i++) {
+      formData.append("images", document.getElementById('images').files[i]);
+    }
+    formData.append("storyAddRequest", new Blob([JSON.stringify(storyAddRequest)], {type: "application/json"}));
+
     $.ajax({
       type: 'POST',
       url: '/api/stories',
-      data: $('#storyAddRequest').serialize(),
-      success: function () {
+      enctype: 'multipart/form-data',
+      data: formData,
+      contentType: false,
+      processData: false,
+      cache: false,
+      success: function (res) {
+        console.log(res)
         alert('스토리가 추가되었습니다.')
         location.href='/calendars'
       }, error: function (res) {
@@ -61,97 +88,48 @@
     })
   }
 
-  function check_all() {
-    if (namePass && enterCodePass) {
-      document.getElementById('addBtn').removeAttribute("disabled")
-    }
-  }
+  $("#images").on("change", (e) => {
+    let totalFiles = e.target.files.length
 
-  function check_name() {
-    let inputName = $("#name").val()
-    namePass = false
-
-    document.getElementById('addBtn').setAttribute("disabled", "true")
-
-    // 공백 체크
-    if (inputName.search(/\s/) !== -1) {
-      document.getElementById('nameFail').removeAttribute("hidden")
-      document.getElementById('nameFail').innerText = "그룹명에는 공백이 포함될 수 없습니다."
-      document.getElementById('namePass').setAttribute("hidden", "true")
+    if (totalFiles > 5) {
+      alert('이미지는 최대 5개 업로드 가능합니다.')
+      delete_images()
       return
     }
 
-    // 글자수 체크
-    if (inputName.length < 2) {
-      document.getElementById('nameFail').removeAttribute("hidden")
-      document.getElementById('nameFail').innerText = "그룹명은 2글자 이상만 가능합니다."
-      document.getElementById('namePass').setAttribute("hidden", "true")
-      return
-    } else if (inputName.length > 15) {
-      document.getElementById('nameFail').removeAttribute("hidden")
-      document.getElementById('nameFail').innerText = "그룹명은 15글자 이하만 가능합니다."
-      document.getElementById('namePass').setAttribute("hidden", "true")
-      return
-    }
+    // 확장자 체크
+    const acceptType = ['gif','png','jpg','jpeg', 'bmp']
 
-    $.ajax({
-      type: 'GET',
-      url: '/api/groups/check-name',
-      data: {
-        name: inputName
-      },
-      success: function (res) {
-        if (res.result == true) {
-          document.getElementById('namePass').removeAttribute("hidden")
-          document.getElementById('nameFail').setAttribute("hidden", "true")
-          namePass = true
-          check_all()
-        } else {
-          document.getElementById('nameFail').removeAttribute("hidden")
-          document.getElementById('nameFail').innerText = "그룹명이 중복됩니다."
-          document.getElementById('namePass').setAttribute("hidden", "true")
-        }
+    for (var i = 0 ; i < totalFiles ; i ++) {
+
+      let image = e.target.files[i]
+      let ext = image.name.substr(image.name.lastIndexOf('.') + 1).toLowerCase()
+      if (acceptType.indexOf(ext) == -1) {
+        alert('이미지만 업로드 가능합니다.')
+        delete_images()
+        return
       }
-    })
+
+      // 최대 용량 10MB 초과
+      if (image.size > 10 * 1024 * 1024) {
+        alert("이미지 하나의 최대 크기는 10MB입니다.")
+        delete_images()
+        return;
+      }
+    }
+  })
+
+  function delete_images() {
+    let agent = navigator.userAgent.toLowerCase();
+
+    // 브라우저가 IE인 경우
+    if ( (navigator.appName == 'Netscape' && navigator.userAgent.search('Trident') != -1) || (agent.indexOf("msie") != -1) ){
+      $("#uploadImage").replaceWith( $("#iamges").clone(true) );
+    } else {
+      $("#images").val("");
+    }
   }
 
-  function check_enterCode() {
-    let inputEnterCode = $("#enterCode").val()
-    enterCodePass = false
-
-    document.getElementById('addBtn').setAttribute("disabled", "true")
-
-    // 한글, 공백 체크
-    if (/[ㄱ-ㅎㅏ-ㅣ가-힣]/g.test(inputEnterCode)) {
-      document.getElementById('enterCodeFail').removeAttribute("hidden")
-      document.getElementById('enterCodeFail').innerText = "입장 코드에는 한글이 포함될 수 없습니다."
-      document.getElementById('enterCodePass').setAttribute("hidden", "true")
-      return
-    } else if (inputEnterCode.search(/\s/) !== -1) {
-      document.getElementById('enterCodeFail').removeAttribute("hidden")
-      document.getElementById('enterCodeFail').innerText = "입장 코드에는 공백이 포함될 수 없습니다."
-      document.getElementById('enterCodePass').setAttribute("hidden", "true")
-      return
-    }
-
-    // 글자수 체크
-    if (inputEnterCode.length < 5) {
-      document.getElementById('enterCodeFail').removeAttribute("hidden")
-      document.getElementById('enterCodeFail').innerText = "입장 코드는 5글자 이상만 가능합니다."
-      document.getElementById('enterCodePass').setAttribute("hidden", "true")
-      return
-    } else if (inputEnterCode.length > 20) {
-      document.getElementById('enterCodeFail').removeAttribute("hidden")
-      document.getElementById('enterCodeFail').innerText = "입장 코드는 20글자 이하만 가능합니다."
-      document.getElementById('enterCodePass').setAttribute("hidden", "true")
-      return
-    }
-
-    document.getElementById('enterCodePass').removeAttribute("hidden")
-    document.getElementById('enterCodeFail').setAttribute("hidden", "true")
-    enterCodePass = true
-    check_all()
-  }
 </script>
 
 </html>

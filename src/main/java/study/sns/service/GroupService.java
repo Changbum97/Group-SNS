@@ -50,8 +50,7 @@ public class GroupService {
     public GroupDto joinGroup(GroupRequest req, String loginId) {
 
         User loginUser = userService.findByLoginId(loginId);
-        Group group = groupRepository.findByName(req.getName())
-                .orElseThrow(() -> new AppException(ErrorCode.GROUP_NOT_FOUND));
+        Group group = findByName(req.getName());
 
         if (loginUser.getUserGroups().size() >= 3) {
             throw new AppException(ErrorCode.MAX_GROUP);
@@ -116,5 +115,10 @@ public class GroupService {
                     req.getEnterCode().contains(" ") || req.getEnterCode().matches(".*[ㄱ-ㅎㅏ-ㅣ가-힣]+.*")) {
             throw new AppException(ErrorCode.INVALID_ENTER_CODE);
         }
+    }
+
+    public Group findByName(String name) {
+        return groupRepository.findByName(name)
+                .orElseThrow(() -> new AppException(ErrorCode.GROUP_NOT_FOUND));
     }
 }
