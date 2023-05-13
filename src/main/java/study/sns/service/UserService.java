@@ -8,15 +8,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import study.sns.domain.dto.user.*;
 import study.sns.domain.entity.User;
+import study.sns.domain.enum_class.UserRole;
 import study.sns.domain.exception.AppException;
 import study.sns.domain.exception.ErrorCode;
 import study.sns.util.JwtTokenUtil;
 import study.sns.repository.UserRepository;
 
-import javax.servlet.http.Cookie;
 import javax.transaction.Transactional;
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor

@@ -2,7 +2,7 @@ package study.sns.domain.entity;
 
 import lombok.*;
 import study.sns.domain.BaseEntity;
-import study.sns.domain.dto.user.UserRole;
+import study.sns.domain.enum_class.UserRole;
 
 import javax.persistence.*;
 import java.util.List;

@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import study.sns.domain.dto.user.UserRole;
-import study.sns.domain.entity.User;
+import study.sns.domain.enum_class.UserRole;
 import study.sns.domain.entity.UserGroup;
 
 import java.util.ArrayList;

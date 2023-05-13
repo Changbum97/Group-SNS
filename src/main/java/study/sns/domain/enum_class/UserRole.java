@@ -1,4 +1,4 @@
-package study.sns.domain.dto.user;
+package study.sns.domain.enum_class;
 
 public enum UserRole {
 

@@ -3,7 +3,7 @@ package study.sns;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-import study.sns.domain.dto.user.UserRole;
+import study.sns.domain.enum_class.UserRole;
 import study.sns.domain.entity.User;
 import study.sns.repository.UserRepository;
 

@@ -2,6 +2,7 @@ package study.sns.domain.dto.user;
 
 import lombok.*;
 import study.sns.domain.entity.User;
+import study.sns.domain.enum_class.UserRole;
 
 @Getter
 @Setter

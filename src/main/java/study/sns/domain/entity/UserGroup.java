@@ -6,6 +6,7 @@ import lombok.ToString;
 import study.sns.domain.BaseEntity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,6 +25,9 @@ public class UserGroup extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     private Group group;
+
+    @OneToMany(mappedBy = "userGroup", orphanRemoval = true)
+    private List<Story> stories;
 
     public UserGroup(User user, Group group) {
         this.user = user;

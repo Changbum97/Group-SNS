@@ -11,8 +11,6 @@ import springfox.documentation.annotations.ApiIgnore;
 import study.sns.domain.Response;
 import study.sns.domain.dto.group.GroupRequest;
 import study.sns.domain.dto.group.GroupDto;
-import study.sns.repository.GroupRepository;
-import study.sns.repository.UserRepository;
 import study.sns.service.GroupService;
 
 import java.util.List;

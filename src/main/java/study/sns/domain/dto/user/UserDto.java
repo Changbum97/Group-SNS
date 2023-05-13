@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import study.sns.domain.entity.User;
+import study.sns.domain.enum_class.UserRole;
 
 @Getter
 @Builder
