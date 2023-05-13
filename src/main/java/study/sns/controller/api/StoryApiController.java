@@ -6,15 +6,13 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 import study.sns.domain.Response;
 import study.sns.domain.dto.story.StoryAddRequest;
 import study.sns.domain.dto.story.StoryDto;
+import study.sns.domain.dto.story.StoryListRequest;
 import study.sns.service.StoryService;
 
 import java.util.List;
@@ -33,5 +31,11 @@ public class StoryApiController {
                                        @RequestPart(value = "storyAddRequest") StoryAddRequest req,
                                        @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         return Response.success(storyService.addStory(auth.getName(), req, images));
+    }
+
+    @GetMapping("/list")
+    @ApiOperation(value = "스토리 리스트 조회", notes = "그룹명, 연도, 월에 해당하는 스토리 리스트 조회")
+    public Response<List<StoryDto>> getStoryList(@ApiIgnore Authentication auth, StoryListRequest req) {
+        return Response.success(storyService.getStoryList(auth.getName(), req));
     }
 }

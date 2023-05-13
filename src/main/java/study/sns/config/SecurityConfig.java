@@ -56,7 +56,8 @@ public class SecurityConfig {
     // 로그인한 유저들만 접근 가능한 URL
     private static final String[] authenticatedUserUrl =
             {"/api/users/logout", "/users/set-nickname", "/api/users/test",
-                    "/shops/**", "/groups/**", "/api/groups/**", "/calendars/**"};
+                    "/shops/**", "/groups/**", "/api/groups/**", "/calendars/**", "/api/calendars/**",
+                    "/stories/**", "/api/stories/**"};
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, HttpServletResponse response) throws Exception {

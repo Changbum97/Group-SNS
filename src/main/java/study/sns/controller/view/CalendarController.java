@@ -19,10 +19,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CalendarController {
 
+    private final GroupService groupService;
+
     @GetMapping("")
     public String calendarMainPage(@RequestParam(required = false) Integer year,
                                    @RequestParam(required = false) Integer month,
-                                   Model model) {
+                                   @RequestParam(required = false) String groupName,
+                                   Model model, Authentication auth) {
         if (year == null || month == null) {
             LocalDateTime now = LocalDateTime.now();
             model.addAttribute("year", now.getYear());
@@ -30,6 +33,21 @@ public class CalendarController {
         } else {
             model.addAttribute("year", year);
             model.addAttribute("month", month);
+        }
+
+        List<GroupDto> groupList = groupService.getGroupList(auth.getName());
+        if (groupList.isEmpty()) {
+            model.addAttribute("message", "최소 하나의 그룹에는 속해있어야 합니다!");
+            model.addAttribute("nextUrl", "/groups");
+            return "pages/printMessage";
+        }
+
+        model.addAttribute("groupList", groupList);
+
+        if (groupName == null) {
+            model.addAttribute("groupName", groupList.get(0).getName());
+        } else {
+            model.addAttribute("groupName", groupName);
         }
         return "pages/calendars/main";
     }

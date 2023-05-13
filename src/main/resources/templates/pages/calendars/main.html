@@ -11,8 +11,15 @@
             <div style="display: flex; justify-content: center; align-items: center">
                 <button class="btn calendar-btn" type="button" onclick="move_month('prev')">&lsaquo;</button>
                 <button class="btn calendar-btn" type="button" onclick="move_month('next')">&rsaquo;</button>
-                <button class="btn calendar-btn" style="width: 70px"
+                <button class="btn calendar-btn" style="width: 70px; margin-right: 30px"
                         type="button" onclick="move_month('now')">오늘</button>
+                <div>
+                    <label th:for="groupName">그룹 : </label>
+                    <select id="groupName" style="height: 40px; width: 200px;" onchange="change_group()">
+                        <option th:each="group : ${groupList}" th:text="${group.name}" th:value="${group.name}"
+                                th:selected="${groupName == group.name}"></option>
+                    </select>
+                </div>
             </div>
         </div>
         <div class="d-flex justify-content-between" style="height: 50px">
@@ -40,7 +47,16 @@
     </div>
 </div>
 <script th:inline="javascript">
-    window.onload = function make_calendar() {
+
+    let groupName
+
+    window.onload = function () {
+        groupName = [[${groupName}]]
+        make_calendar()
+    }
+
+    function make_calendar() {
+
         let nowDate = new Date()
 
         let year = [[${year}]]
@@ -59,9 +75,9 @@
             let tempDate = new Date(year, month, i);
             if (tempDate.getDay() == 6 || tempDate.getDay() == 0) {
                 if (tempDate.getFullYear() == nowDate.getFullYear() && tempDate.getMonth() == nowDate.getMonth() && tempDate.getDate() == nowDate.getDate()) {
-                    html += "<td class='calendar-td calendar-red' style='background-color: lightgoldenrodyellow'><strong>" + tempDate.getDate() + "</strong></td>"
+                    html += "<td class='calendar-td calendar-red' style='background-color: lightgoldenrodyellow' id='"+ tempDate.getDate().toString().padStart(2, '0') +"'><strong>" + tempDate.getDate() + "</strong></td>"
                 } else {
-                    html += "<td class='calendar-td calendar-red'><strong>" + tempDate.getDate() + "</strong></td>"
+                    html += "<td class='calendar-td calendar-red' id='"+ tempDate.getDate().toString().padStart(2, '0') +"'><strong>" + tempDate.getDate() + "</strong></td>"
                 }
 
                 if (tempDate.getDay() == 6) {
@@ -69,16 +85,56 @@
                 }
             } else {
                 if (tempDate.getFullYear() == nowDate.getFullYear() && tempDate.getMonth() == nowDate.getMonth() && tempDate.getDate() == nowDate.getDate()) {
-                    html += "<td class='calendar-td' style='background-color: lightgoldenrodyellow'><strong>" + tempDate.getDate() + "</strong></td>"
+                    html += "<td class='calendar-td' style='background-color: lightgoldenrodyellow' id='"+ tempDate.getDate().toString().padStart(2, '0') +"'><strong>" + tempDate.getDate() + "</strong></td>"
                 } else {
-                    html += "<td class='calendar-td'><strong>" + tempDate.getDate() + "</strong></td>"
+                    html += "<td class='calendar-td' id='"+ tempDate.getDate().toString().padStart(2, '0') +"'><strong>" + tempDate.getDate().toString().padStart(2, '0') + "</strong></td>"
                 }
             }
-
-
         }
         html += "</tr>"
         $('#calendar-body').append(html)
+
+        get_story_list()
+    }
+
+    function get_story_list() {
+        let storyList;
+
+        $.ajax({
+            type: 'GET',
+            url: '/api/stories/list',
+            data: {
+                groupName: groupName,
+                year: [[${year}]],
+                month: [[${month}]]
+            },
+            success: function (res) {
+                console.log(res)
+                storyList = res.result
+            }, error: function (res) {
+                alert(res.responseJSON.result.message)
+                location.href='/calendars'
+            }
+        }).done( function () {
+            for (var i = 0 ; i < storyList.length ; i ++) {
+                let id = storyList[i].id.toString()
+                let targetId = storyList[i].date.toString().slice(-2)
+                let title = storyList[i].title.toString()
+                let scope = storyList[i].scope.toString()
+
+                if (scope == 'PUBLIC') {
+                    $('#' + targetId).append(
+                        "<br/><button type='button' class='calendar-td-btn' " +
+                        "onclick=\"location.href='/stories/" + id + "'\">" + title + "</button>")
+                } else {
+                    $('#' + targetId).append(
+                        "<br/><button type='button' class='calendar-td-btn' " +
+                        "onclick=\"location.href='/stories/" + id + "'\"><i class='bi bi-lock-fill'></i>" + title + "</button>")
+                }
+                console.log(targetId + " " + title + " " + scope)
+                console.log("=======")
+            }
+        })
     }
 
     function move_month(to) {
@@ -109,7 +165,11 @@
                 }
             }
         }
-        location.href = '/calendars?year=' + year + "&month=" + month
+        location.href = '/calendars?year=' + year + "&month=" + month + "&groupName=" + groupName
+    }
+
+    function change_group() {
+        groupName = $("#groupName").val()
     }
 </script>
 </body>

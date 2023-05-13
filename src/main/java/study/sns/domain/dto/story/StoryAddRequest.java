@@ -8,7 +8,6 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class StoryAddRequest {
 
     private String groupName;

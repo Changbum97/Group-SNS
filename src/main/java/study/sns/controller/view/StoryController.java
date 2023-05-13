@@ -26,7 +26,6 @@ public class StoryController {
             model.addAttribute("message", "최소 하나의 그룹에는 속해있어야 합니다!");
             model.addAttribute("nextUrl", "/groups");
             return "pages/printMessage";
-
         }
 
         model.addAttribute("storyAddRequest", new StoryAddRequest());

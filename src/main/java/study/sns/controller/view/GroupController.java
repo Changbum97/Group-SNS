@@ -8,22 +8,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import study.sns.domain.dto.group.GroupRequest;
-import study.sns.domain.entity.User;
 import study.sns.service.GroupService;
-import study.sns.service.UserService;
 
 @Controller
 @RequestMapping("/groups")
 @RequiredArgsConstructor
 public class GroupController {
 
-    private final UserService userService;
     private final GroupService groupService;
 
     @GetMapping("")
     public String groupMainPage(Authentication auth, Model model) {
-        User user = userService.findByLoginId(auth.getName());
-        model.addAttribute("groupList", groupService.getGroupList(user.getLoginId()));
+        model.addAttribute("groupList", groupService.getGroupList(auth.getName()));
         return "pages/groups/list";
     }
 

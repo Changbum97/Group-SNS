@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StoryDto {
+public class StoryDto implements Comparable<StoryDto> {
 
     private Long id;
     private String title;
@@ -35,5 +35,16 @@ public class StoryDto {
                 .userId(story.getUserGroup().getUser().getId())
                 .groupId(story.getUserGroup().getGroup().getId())
                 .build();
+    }
+
+    @Override
+    public int compareTo(StoryDto o) {
+        if (o.date.isBefore(date)) {
+            return 1;
+        } else if (o.date.isAfter(date)) {
+            return -1;
+        } else {
+            return (int) (id - o.id);
+        }
     }
 }

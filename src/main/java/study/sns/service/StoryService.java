@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import study.sns.domain.dto.story.StoryAddRequest;
 import study.sns.domain.dto.story.StoryDto;
+import study.sns.domain.dto.story.StoryListRequest;
 import study.sns.domain.entity.Group;
 import study.sns.domain.entity.Story;
 import study.sns.domain.entity.User;
@@ -15,6 +16,9 @@ import study.sns.domain.exception.ErrorCode;
 import study.sns.repository.StoryRepository;
 import study.sns.repository.UserGroupRepository;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -49,5 +53,25 @@ public class StoryService {
 
         Story savedStory = storyRepository.save(story);
         return StoryDto.of(savedStory);
+    }
+
+    public List<StoryDto> getStoryList(String loginId, StoryListRequest req) {
+        User user = userService.findByLoginId(loginId);
+        Group group = groupService.findByName(req.getGroupName());
+        UserGroup userGroup = userGroupRepository.findByUserAndGroup(user, group)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_GROUP_NOT_FOUND));
+
+        List<StoryDto> result = new ArrayList<>();
+        for (Story story : userGroup.getStories()) {
+            LocalDate firstDate = LocalDate.of(req.getYear(), req.getMonth(), 1);
+            LocalDate lastDate = LocalDate.of(req.getYear(), req.getMonth(), firstDate.lengthOfMonth());
+            if ((story.getDate().isAfter(firstDate) || story.getDate().equals(firstDate)) &&
+                (story.getDate().isBefore(lastDate) || story.getDate().equals(lastDate))) {
+                result.add(StoryDto.of(story));
+            }
+        }
+
+        Collections.sort(result);
+        return result;
     }
 }
