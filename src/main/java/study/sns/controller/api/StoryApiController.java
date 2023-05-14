@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
@@ -37,5 +38,11 @@ public class StoryApiController {
     @ApiOperation(value = "스토리 리스트 조회", notes = "그룹명, 연도, 월에 해당하는 스토리 리스트 조회")
     public Response<List<StoryDto>> getStoryList(@ApiIgnore Authentication auth, StoryListRequest req) {
         return Response.success(storyService.getStoryList(auth.getName(), req));
+    }
+
+    @GetMapping("/{storyId}")
+    @ApiOperation(value = "스토리 상세 조회")
+    public Response<StoryDto> storyDetailPage(@PathVariable Long storyId, @ApiIgnore Authentication auth) {
+        return Response.success(storyService.getStory(auth.getName(), storyId));
     }
 }
