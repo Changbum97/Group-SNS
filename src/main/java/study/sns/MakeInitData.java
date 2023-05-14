@@ -9,14 +9,14 @@ import study.sns.repository.UserRepository;
 
 import javax.annotation.PostConstruct;
 
-@Component
+//@Component
 @RequiredArgsConstructor
 public class MakeInitData {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
 
-    @PostConstruct
+    //@PostConstruct
     public void makeUser() {
         User admin = User.builder()
                 .loginId("admin")
