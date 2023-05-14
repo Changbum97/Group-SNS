@@ -9,7 +9,7 @@ import study.sns.repository.UserRepository;
 
 import javax.annotation.PostConstruct;
 
-//@Component
+@Component
 @RequiredArgsConstructor
 public class MakeInitData {
 

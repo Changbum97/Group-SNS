@@ -40,7 +40,4 @@ public class User extends BaseEntity {
         this.password = password;
     }
 
-    public void addGroup(UserGroup userGroup) {
-        userGroups.add(userGroup);
-    }
 }
