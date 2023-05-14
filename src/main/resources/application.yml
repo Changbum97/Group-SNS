@@ -85,3 +85,17 @@ mail:
 AdminMail:
   id: chb20050@gmail.com
   # password -> 환경변수
+
+# S3 관련
+cloud:
+  aws:
+    s3:
+      # bucket -> 환경변수
+    credentials:
+      # access-key -> 환경변수
+      # secret-key -> 환경변수
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false

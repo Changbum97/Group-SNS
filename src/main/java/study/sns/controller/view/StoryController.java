@@ -5,10 +5,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import study.sns.domain.dto.group.GroupDto;
 import study.sns.domain.dto.story.StoryAddRequest;
 import study.sns.service.GroupService;
+import study.sns.service.StoryService;
 
 import java.util.List;
 
@@ -18,6 +20,7 @@ import java.util.List;
 public class StoryController {
 
     private final GroupService groupService;
+    private final StoryService storyService;
 
     @GetMapping("/add")
     public String storyAddPage(Model model, Authentication auth) {
@@ -31,5 +34,11 @@ public class StoryController {
         model.addAttribute("storyAddRequest", new StoryAddRequest());
         model.addAttribute("groups", groupDtos);
         return "pages/stories/add";
+    }
+
+    @GetMapping("/{storyId}")
+    public String storyDetailPage(@PathVariable Long storyId, Model model, Authentication auth) {
+        model.addAttribute("story", storyService.getStory(auth.getName(), storyId));
+        return "pages/stories/detail";
     }
 }

@@ -1,6 +1,8 @@
 package study.sns.service;
 
+import com.amazonaws.services.s3.AmazonS3;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import study.sns.domain.dto.story.StoryAddRequest;
@@ -16,6 +18,7 @@ import study.sns.domain.exception.ErrorCode;
 import study.sns.repository.StoryRepository;
 import study.sns.repository.UserGroupRepository;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +32,11 @@ public class StoryService {
     private final UserService userService;
     private final GroupService groupService;
     private final UserGroupRepository userGroupRepository;
+    private final S3UploadService s3UploadService;
+    private final AmazonS3 amazonS3;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
 
     public StoryDto addStory(String loginId, StoryAddRequest req, List<MultipartFile> images) {
         User user = userService.findByLoginId(loginId);
@@ -52,7 +60,18 @@ public class StoryService {
                 .build();
 
         Story savedStory = storyRepository.save(story);
-        return StoryDto.of(savedStory);
+
+        if (images != null) {
+            try {
+                for (MultipartFile image : images) {
+                    s3UploadService.saveImage(image, savedStory);
+                }
+            } catch (IOException e) {
+                throw new AppException(ErrorCode.S3_UPLOAD_FAIL);
+            }
+        }
+
+        return StoryDto.of(savedStory, amazonS3, bucket);
     }
 
     public List<StoryDto> getStoryList(String loginId, StoryListRequest req) {
@@ -67,11 +86,22 @@ public class StoryService {
             LocalDate lastDate = LocalDate.of(req.getYear(), req.getMonth(), firstDate.lengthOfMonth());
             if ((story.getDate().isAfter(firstDate) || story.getDate().equals(firstDate)) &&
                 (story.getDate().isBefore(lastDate) || story.getDate().equals(lastDate))) {
-                result.add(StoryDto.of(story));
+                result.add(StoryDto.of(story, amazonS3, bucket));
             }
         }
 
         Collections.sort(result);
         return result;
+    }
+
+    public StoryDto getStory(String loginId, Long storyId) {
+        User user = userService.findByLoginId(loginId);
+        Story story = storyRepository.findById(storyId)
+                .orElseThrow(() -> new AppException(ErrorCode.STORY_NOT_FOUND));
+        if (!user.getUserGroups().contains(story.getUserGroup())) {
+            throw new AppException(ErrorCode.INVALID_PERMISSION);
+        }
+
+        return StoryDto.of(story, amazonS3, bucket);
     }
 }

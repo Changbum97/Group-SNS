@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko"  xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"/>
+<body>
+<div class="row" style="height: 100%">
+  <div th:replace="fragments/header.html :: side-bar" />
+  <div class="col-9">
+    <br/><br/>
+    <h2>제목 : [[${story.title}]]</h2>
+    <h3>날짜 : [[${story.date}]]</h3>
+    <h3>작성자 : [[${story.userNickname}]]</h3>
+    <textarea rows="3" style="width: 500px">[[${story.body}]]</textarea>
+    <br/>
+    <img th:each="imageUrl : ${story.uploadImagesUrl}" th:src="${imageUrl}"
+         width="300px" height="300px" style="border-color: black; border-style: solid; border-width: thin;"/>
+    <br/>
+    <br/><button type="button" class="btn story-btn">뒤로가기</button>
+  </div>
+</div>
+</body>
+</html>
