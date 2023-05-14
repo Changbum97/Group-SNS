@@ -1,9 +1,13 @@
-# Group SNS
+# Group SNS (2023.04 ~ 진행중)
 
 ## 결과
 
 [배포 사이트](http://ec2-52-79-82-151.ap-northeast-2.compute.amazonaws.com:8085/)
 [Swagger Docs](http://ec2-52-79-82-151.ap-northeast-2.compute.amazonaws.com:8085/swagger-ui/)
+
+## ERD
+
+![](https://blog.kakaocdn.net/dn/bYUM4F/btsfg4HooXz/giC5Zg58ecaHHB7Qfe2KV0/img.png)
 
 ## 개발 환경
 
