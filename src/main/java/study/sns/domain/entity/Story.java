@@ -31,6 +31,6 @@ public class Story {
     private List<UploadImage> uploadImages;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_group_id")
+    @JoinColumn(name = "user_id")
     private UserGroup userGroup;
 }

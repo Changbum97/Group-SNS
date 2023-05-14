@@ -26,4 +26,6 @@ public class Group extends BaseEntity {
     public void addUser(UserGroup userGroup) {
         userGroups.add(userGroup);
     }
+
+
 }

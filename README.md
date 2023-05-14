@@ -71,6 +71,8 @@
 
 - 그룹 추가 : POST /api/groups
 - 그룹 참여 : GET /api/groups/join
+- 내가 속한 그룹 리스트 : GET /api/groups/list
+- 
 - 그룹명 중복 체크 : GET /api/groups/check-name
 
 ## 기능

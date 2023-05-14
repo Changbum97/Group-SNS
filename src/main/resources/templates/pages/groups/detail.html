@@ -6,11 +6,11 @@
   <div th:replace="fragments/header.html :: side-bar" />
   <div class="col-9">
     <br/> <h2>그룹 정보</h2> <br/>
-    <h3>그룹명 : [[${groupDetail.name}]]</h3>
-    <h3>입장코드 : [[${groupDetail.enterCode}]]</h3>
-    <h3>게시글 수 : [[${groupDetail.storyCount}]] 개</h3>
+    <h3>그룹명 : [[${groupDetail.groupDto.name}]]</h3>
+    <h3>입장코드 : [[${groupDetail.groupDto.enterCode}]]</h3>
+    <h3>게시글 수 : [[${groupDetail.groupDto.totalStoryCount}]] 개</h3>
     <h3>그룹원 수 : [[${groupDetail.userGroupDtos.size()}]] 명</h3>
-    <h3>그룹 생성일 : [[${groupDetail.createdAt}]]</h3><br/>
+    <h3>그룹 생성일 : [[${groupDetail.groupDto.createdAt}]]</h3><br/>
 
     <table class="table group-table table-hover">
       <thead style="background-color: #333333">

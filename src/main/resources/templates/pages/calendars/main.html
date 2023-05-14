@@ -109,7 +109,6 @@
                 month: [[${month}]]
             },
             success: function (res) {
-                console.log(res)
                 storyList = res.result
             }, error: function (res) {
                 alert(res.responseJSON.result.message)
@@ -131,8 +130,6 @@
                         "<br/><button type='button' class='calendar-td-btn' " +
                         "onclick=\"location.href='/stories/" + id + "'\"><i class='bi bi-lock-fill'></i>" + title + "</button>")
                 }
-                console.log(targetId + " " + title + " " + scope)
-                console.log("=======")
             }
         })
     }
@@ -170,6 +167,7 @@
 
     function change_group() {
         groupName = $("#groupName").val()
+        location.href = '/calendars?year=' + [[${year}]] + "&month=" + [[${month}]] + "&groupName=" + groupName
     }
 </script>
 </body>

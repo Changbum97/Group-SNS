@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import study.sns.domain.entity.Group;
+import study.sns.domain.entity.UserGroup;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -19,7 +20,7 @@ public class GroupDto {
     private String name;
     private String enterCode;
     private Integer memberCount;
-    private Integer storyCount;
+    private Integer totalStoryCount;
     private String createdAt;
 
     public static GroupDto of(Group group) {
@@ -28,8 +29,18 @@ public class GroupDto {
                 .name(group.getName())
                 .enterCode(group.getEnterCode())
                 .memberCount(group.getUserGroups().size())
-                .storyCount(0)
+                .totalStoryCount(getTotalStoryCount(group))
                 .createdAt(group.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .build();
+    }
+
+    private static Integer getTotalStoryCount(Group group) {
+        int result = 0;
+        for (UserGroup userGroup : group.getUserGroups()) {
+            if (userGroup.getStories() != null) {
+                result += userGroup.getStories().size();
+            }
+        }
+        return result;
     }
 }

@@ -18,6 +18,7 @@ import study.sns.domain.exception.ErrorCode;
 import study.sns.repository.StoryRepository;
 import study.sns.repository.UserGroupRepository;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class StoryService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    @Transactional
     public StoryDto addStory(String loginId, StoryAddRequest req, List<MultipartFile> images) {
         User user = userService.findByLoginId(loginId);
         Group group = groupService.findByName(req.getGroupName());
@@ -77,16 +79,18 @@ public class StoryService {
     public List<StoryDto> getStoryList(String loginId, StoryListRequest req) {
         User user = userService.findByLoginId(loginId);
         Group group = groupService.findByName(req.getGroupName());
-        UserGroup userGroup = userGroupRepository.findByUserAndGroup(user, group)
+        userGroupRepository.findByUserAndGroup(user, group)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_GROUP_NOT_FOUND));
 
         List<StoryDto> result = new ArrayList<>();
-        for (Story story : userGroup.getStories()) {
-            LocalDate firstDate = LocalDate.of(req.getYear(), req.getMonth(), 1);
-            LocalDate lastDate = LocalDate.of(req.getYear(), req.getMonth(), firstDate.lengthOfMonth());
-            if ((story.getDate().isAfter(firstDate) || story.getDate().equals(firstDate)) &&
-                (story.getDate().isBefore(lastDate) || story.getDate().equals(lastDate))) {
-                result.add(StoryDto.of(story, amazonS3, bucket));
+        for (UserGroup userGroup : group.getUserGroups()) {
+            for (Story story : userGroup.getStories()) {
+                LocalDate firstDate = LocalDate.of(req.getYear(), req.getMonth(), 1);
+                LocalDate lastDate = LocalDate.of(req.getYear(), req.getMonth(), firstDate.lengthOfMonth());
+                if ((story.getDate().isAfter(firstDate) || story.getDate().equals(firstDate)) &&
+                        (story.getDate().isBefore(lastDate) || story.getDate().equals(lastDate))) {
+                    result.add(StoryDto.of(story, amazonS3, bucket));
+                }
             }
         }
 
@@ -95,10 +99,13 @@ public class StoryService {
     }
 
     public StoryDto getStory(String loginId, Long storyId) {
-        User user = userService.findByLoginId(loginId);
+        User loginUser = userService.findByLoginId(loginId);
         Story story = storyRepository.findById(storyId)
                 .orElseThrow(() -> new AppException(ErrorCode.STORY_NOT_FOUND));
-        if (!user.getUserGroups().contains(story.getUserGroup())) {
+
+        // 로그인한 유저가 스토리에 접근할 수 있는지 확인
+        Group storyGroup = story.getUserGroup().getGroup();
+        if (!userGroupRepository.existsByUserAndGroup(loginUser, storyGroup)) {
             throw new AppException(ErrorCode.INVALID_PERMISSION);
         }
 

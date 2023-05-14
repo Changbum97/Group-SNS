@@ -35,7 +35,7 @@ public class UserGroupDto {
         return UserGroupDto.builder()
                 .nickname(userGroup.getUser().getNickname())
                 .userRole(userGroup.getUser().getUserRole())
-                .groupStoryCount(0)
+                .groupStoryCount(userGroup.getStories().size())
                 .build();
     }
 }
