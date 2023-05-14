@@ -7,7 +7,7 @@
 
 ## ERD
 
-![](https://blog.kakaocdn.net/dn/bYUM4F/btsfg4HooXz/giC5Zg58ecaHHB7Qfe2KV0/img.png)
+![](https://blog.kakaocdn.net/dn/pHIXY/btsfdczG1eL/T7FIL4E08Izm0QVe814Jwk/img.png)
 
 ## 개발 환경
 
