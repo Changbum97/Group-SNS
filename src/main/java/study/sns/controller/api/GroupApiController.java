@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 import study.sns.domain.Response;
+import study.sns.domain.dto.group.GroupDetailResponse;
 import study.sns.domain.dto.group.GroupRequest;
 import study.sns.domain.dto.group.GroupDto;
 import study.sns.service.GroupService;
@@ -42,6 +43,12 @@ public class GroupApiController {
     @ApiOperation(value = "내가 속한 그룹 리스트")
     public Response<List<GroupDto>> getMyGroupList(@ApiIgnore Authentication auth) {
         return Response.success(groupService.getGroupList(auth.getName()));
+    }
+
+    @GetMapping("/{groupId}")
+    @ApiOperation(value = "그룹 상세 정보 조회")
+    public Response<GroupDetailResponse> groupDetail(@PathVariable Long groupId, @ApiIgnore Authentication auth) {
+        return Response.success(groupService.getGroupDetail(groupId, auth.getName()));
     }
 
     @GetMapping("/check-name")

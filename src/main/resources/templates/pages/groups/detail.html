@@ -15,16 +15,16 @@
     <table class="table group-table table-hover">
       <thead style="background-color: #333333">
       <tr>
-        <th style="width: 30%">닉네임</th>
+        <th style="width: 40%">닉네임</th>
         <th style="width: 20%">권한</th>
-        <th style="width: 15%">게시글 수</th>
+        <th style="width: 40%">그룹에 작성한 게시글 수</th>
       </tr>
       </thead>
       <tbody>
       <tr th:each="dto : ${groupDetail.userGroupDtos}">
-        <td style="width: 30%" th:text="${dto.nickname}"></td>
+        <td style="width: 40%" th:text="${dto.nickname}"></td>
         <td style="width: 20%" th:text="${dto.userRole}"></td>
-        <td style="width: 15%" th:text="${dto.groupStoryCount}"></td>
+        <td style="width: 40%" th:text="${dto.groupStoryCount}"></td>
       </tr>
       </tbody>
     </table>
