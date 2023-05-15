@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +27,8 @@ public class StoryApiController {
 
     private final StoryService storyService;
 
-    @PostMapping("")
-    @ApiOperation(value = "스토리 추가")
+    @PostMapping(value = "")
+    @ApiOperation(value = "스토리 추가", notes = "scope(스토리 공개 범위) => private 또는 public 입력")
     public Response<StoryDto> addStory(@ApiIgnore Authentication auth,
                                        @RequestPart(value = "storyAddRequest") StoryAddRequest req,
                                        @RequestPart(value = "images", required = false) List<MultipartFile> images) {

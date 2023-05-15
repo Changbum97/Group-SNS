@@ -8,6 +8,7 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class StoryAddRequest {
 
     private String groupName;
@@ -15,4 +16,8 @@ public class StoryAddRequest {
     private String body;
     private String scope;
     private LocalDate date;
+
+    public StoryAddRequest(String groupName) {
+        this.groupName = groupName;
+    }
 }

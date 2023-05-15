@@ -7,7 +7,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import study.sns.domain.dto.group.GroupDto;
+import study.sns.domain.dto.group.GroupRequest;
 import study.sns.domain.dto.story.StoryAddRequest;
 import study.sns.service.GroupService;
 import study.sns.service.StoryService;
@@ -23,7 +25,8 @@ public class StoryController {
     private final StoryService storyService;
 
     @GetMapping("/add")
-    public String storyAddPage(Model model, Authentication auth) {
+    public String storyAddPage(Model model, Authentication auth,
+                               @RequestParam(required = false) String group) {
         List<GroupDto> groupDtos = groupService.getGroupList(auth.getName());
         if (groupDtos.size() == 0) {
             model.addAttribute("message", "최소 하나의 그룹에는 속해있어야 합니다!");
@@ -31,8 +34,9 @@ public class StoryController {
             return "pages/printMessage";
         }
 
-        model.addAttribute("storyAddRequest", new StoryAddRequest());
+        model.addAttribute("storyAddRequest", new StoryAddRequest(group));
         model.addAttribute("groups", groupDtos);
+
         return "pages/stories/add";
     }
 

@@ -79,9 +79,9 @@
       processData: false,
       cache: false,
       success: function (res) {
-        console.log(res)
         alert('스토리가 추가되었습니다.')
-        location.href='/calendars'
+        location.href='/calendars?year=' + res.result.date.toString().split('-')[0] +
+                '&month=' + res.result.date.toString().split('-')[1] + '&groupName=' + res.result.groupName
       }, error: function (res) {
         alert(res.responseJSON.result.message)
       }
