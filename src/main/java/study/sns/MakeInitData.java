@@ -16,7 +16,7 @@ public class MakeInitData {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
 
-    //@PostConstruct
+    @PostConstruct
     public void makeUser() {
         User admin = User.builder()
                 .loginId("admin")
@@ -32,7 +32,7 @@ public class MakeInitData {
                 .loginId("user")
                 .password(encoder.encode("1234"))
                 .nickname("지나가는행인")
-                .userRole(UserRole.USER)
+                .userRole(UserRole.BRONZE)
                 .email("chb2005@naver.com")
                 .build();
 

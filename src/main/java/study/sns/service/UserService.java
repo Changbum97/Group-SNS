@@ -40,7 +40,7 @@ public class UserService {
             throw e;
         }
 
-        User savedUser = userRepository.save( req.toEntity(encoder.encode(req.getPassword()), UserRole.USER) );
+        User savedUser = userRepository.save( req.toEntity(encoder.encode(req.getPassword()), UserRole.BRONZE) );
         return UserDto.of(savedUser);
     }
 

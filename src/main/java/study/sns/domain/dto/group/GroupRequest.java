@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import study.sns.domain.entity.Group;
+import study.sns.domain.enum_class.GroupRole;
 
 import java.util.ArrayList;
 
@@ -22,6 +23,7 @@ public class GroupRequest {
                 .name(name)
                 .enterCode(enterCode)
                 .userGroups(new ArrayList<>())
+                .groupRole(GroupRole.BRONZE)
                 .build();
     }
 }

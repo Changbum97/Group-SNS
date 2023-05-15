@@ -10,7 +10,7 @@
       <h1>스토리 추가</h1><hr/>
       <div>
         <label th:for="groupName">그룹 선택</label><br/>
-        <select th:field="*{groupName}" style="height: 30px; width: 300px;">
+        <select th:field="*{groupName}" style="height: 30px; width: 300px;" onchange="change_group()">
           <option th:each="group : ${groups}" th:text="${group.name}" th:value="${group.name}"></option>
         </select>
       </div>
@@ -30,7 +30,7 @@
       </div>
       <br/>
       <div>
-        <label th:for="images">사진 첨부(최대 5개, 개당 10MB 제한)</label><br/>
+        <label th:for="images" id="images-label"></label><br/>
         <input type="file" id="images" multiple="multiple"/>
       </div>
       <br/>
@@ -52,6 +52,9 @@
 
   window.onload = function () {
     document.getElementById('date').value = new Date().toISOString().substring(0, 10)
+    let maxImages = find_max_images( find_group_role($("#groupName").val()) )
+    document.getElementById('images-label').innerText = '사진 첨부(이미지 당 10MB 제한, 최대 ' + maxImages + '개)'
+
   }
 
   function add_story() {
@@ -88,11 +91,21 @@
     })
   }
 
+  function change_group() {
+    let maxImages = find_max_images( find_group_role($("#groupName").val()) )
+    document.getElementById('images-label').innerText = '사진 첨부(이미지 당 10MB 제한, 최대 ' + maxImages + '개)'
+    if ($("#images")[0].files.length > maxImages) {
+      alert('이미지는 최대 ' + maxImages + '개 업로드 가능합니다.')
+      delete_images()
+    }
+  }
+
   $("#images").on("change", (e) => {
     let totalFiles = e.target.files.length
+    let maxImages = find_max_images( find_group_role($("#groupName").val()) )
 
-    if (totalFiles > 5) {
-      alert('이미지는 최대 5개 업로드 가능합니다.')
+    if (totalFiles > maxImages) {
+      alert('이미지는 최대 ' + maxImages + '개 업로드 가능합니다.')
       delete_images()
       return
     }
@@ -118,6 +131,26 @@
       }
     }
   })
+
+  function find_group_role(groupName) {
+    let groups = [[${groups}]]
+    for (var i = 0 ; i < groups.length ; i ++) {
+      if (groups[i].name == groupName) {
+        return groups[i].groupRole
+      }
+    }
+  }
+
+  function find_max_images(groupRole) {
+    if (groupRole == 'BRONZE' || groupRole == 'SILVER') {
+      return 5
+    } else if (groupRole == 'GOLD') {
+      return 10
+    } else if (groupRole == 'DIAMOND') {
+      return 20
+    }
+    return 0
+  }
 
   function delete_images() {
     let agent = navigator.userAgent.toLowerCase();

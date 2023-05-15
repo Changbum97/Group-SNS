@@ -16,18 +16,20 @@
       <thead style="background-color: #333333">
         <tr>
           <th style="width: 30%">그룹명</th>
+          <th style="width: 10%">등급</th>
           <th style="width: 20%">입장 코드</th>
-          <th style="width: 15%">그룹원 수</th>
-          <th style="width: 15%">게시글 수</th>
+          <th style="width: 10%">그룹원 수</th>
+          <th style="width: 10%">게시글 수</th>
           <th style="width: 20%">그룹 생성일</th>
         </tr>
       </thead>
       <tbody>
         <tr th:each="group : ${groupList}" th:onclick="|location.href='@{/groups/{groupId} (groupId=${group.id})}'|">
           <td style="width: 30%" th:text="${group.name}"></td>
+          <td style="width: 10%" th:text="${group.groupRole}"></td>
           <td style="width: 20%" th:text="${group.enterCode}"></td>
-          <td style="width: 15%" th:text="${group.memberCount}"></td>
-          <td style="width: 15%" th:text="${group.totalStoryCount}"></td>
+          <td style="width: 10%" th:text="${group.memberCount}"></td>
+          <td style="width: 10%" th:text="${group.totalStoryCount}"></td>
           <td style="width: 20%" th:text="${group.createdAt}"></td>
         </tr>
       </tbody>

@@ -62,7 +62,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
                     .password(password)
                     .email(email)
                     .nickname("")
-                    .userRole(UserRole.USER)
+                    .userRole(UserRole.BRONZE)
                     .provider(provider)
                     .providerId(providerId)
                     .build();

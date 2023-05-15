@@ -37,7 +37,8 @@ public class GroupService {
             throw e;
         }
 
-        if (loginUser.getUserGroups().size() >= 3) {
+
+        if (loginUser.getUserGroups().size() >= loginUser.getUserRole().getMaxGroupJoin()) {
             throw new AppException(ErrorCode.MAX_GROUP);
         }
 
@@ -52,7 +53,7 @@ public class GroupService {
         User loginUser = userService.findByLoginId(loginId);
         Group group = findByName(req.getName());
 
-        if (loginUser.getUserGroups().size() >= 3) {
+        if (loginUser.getUserGroups().size() >= loginUser.getUserRole().getMaxGroupJoin()) {
             throw new AppException(ErrorCode.MAX_GROUP);
         }
 

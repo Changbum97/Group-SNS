@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import study.sns.domain.entity.Group;
 import study.sns.domain.entity.UserGroup;
+import study.sns.domain.enum_class.GroupRole;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -22,6 +23,7 @@ public class GroupDto {
     private Integer memberCount;
     private Integer totalStoryCount;
     private String createdAt;
+    private GroupRole groupRole;
 
     public static GroupDto of(Group group) {
         return GroupDto.builder()
@@ -31,6 +33,7 @@ public class GroupDto {
                 .memberCount(group.getUserGroups().size())
                 .totalStoryCount(getTotalStoryCount(group))
                 .createdAt(group.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .groupRole(group.getGroupRole())
                 .build();
     }
 

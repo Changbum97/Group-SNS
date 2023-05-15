@@ -2,6 +2,7 @@ package study.sns.domain.entity;
 
 import lombok.*;
 import study.sns.domain.BaseEntity;
+import study.sns.domain.enum_class.GroupRole;
 
 import javax.persistence.*;
 import java.util.List;
@@ -22,6 +23,9 @@ public class Group extends BaseEntity {
 
     @OneToMany(mappedBy = "group")
     private List<UserGroup> userGroups;
+
+    @Enumerated(EnumType.STRING)
+    private GroupRole groupRole;
 
     public void addUser(UserGroup userGroup) {
         userGroups.add(userGroup);
