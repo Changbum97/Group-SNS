@@ -9,6 +9,8 @@
     <h2>그룹 : [[${story.groupName}]]</h2>
     <h3>제목 : [[${story.title}]]</h3>
     <h3>작성자 : [[${story.userNickname}]]</h3>
+    <h3>공개범위 : <span th:if="${story.scope.name() == 'PUBLIC'}">전체 공개</span>
+                <span th:unless="${story.scope.name() == 'PUBLIC'}">그룹 공개</span></h3>
     <h3>날짜 : [[${story.date}]]</h3>
     <div class="d-flex">
       <h3>내용 :&nbsp;</h3><textarea rows="3" style="width: 500px">[[${story.body}]]</textarea>
