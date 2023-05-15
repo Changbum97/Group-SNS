@@ -56,6 +56,8 @@
 - 그룹 삭제
   - 모든 그룹원들은 그룹 삭제 가능
   - 그룹 삭제 시 그룹에 속한 스토리 모두 삭제
+- 그룹 탈퇴
+  - 유저가 그룹 탈퇴 시, 해당 유저가 작성한 스토리 모두 삭제
 
 ### 달력 기능
 
@@ -126,6 +128,7 @@
 - 그룹명 중복 체크 : GET /api/groups/check-name
 - 그룹 수정 : PUT /api/groups/{groupId}
 - 그룹 삭제 : DELETE /api/groups/{groupId}
+- 그룹 탈퇴 : DELETE /api/groups/leave/{groupId}
 
 ### 스토리 기능 (/api/stories)
 

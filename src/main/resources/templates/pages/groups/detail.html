@@ -9,9 +9,10 @@
     <div class="d-flex justify-content-between">
       <h2>그룹 정보</h2>
       <div>
+        <button class="btn story-btn" style="background-color: orangered" onclick="delete_group_user()">그룹 탈퇴</button>
         <button class="btn story-btn"
-                th:onclick="|location.href='@{/groups/{groupId}/edit (groupId=${groupDetail.groupDto.id})}'|">수정</button>
-        <button class="btn story-btn" style="background-color: orangered" onclick="delete_group()">삭제</button>
+                th:onclick="|location.href='@{/groups/{groupId}/edit (groupId=${groupDetail.groupDto.id})}'|">그룹 수정</button>
+        <button class="btn story-btn" style="background-color: orangered" onclick="delete_group()">그룹 삭제</button>
       </div>
     </div>
     <br/>
@@ -50,7 +51,21 @@
         url: '/api/groups/' + [[${groupDetail.groupDto.id}]] ,
         type: "DELETE",
         success: function (res) {
-          console.log(res)
+          alert(res.result);
+          location.href = "/groups";
+        }, error: function (res) {
+          alert(res.responseJSON.result.message)
+          location.href='/groups'
+        }
+      });
+    }
+  }
+  function delete_group_user() {
+    if (confirm("그룹에서 탈퇴하면 작성한 스토리가 모두 삭제되고 복원할 수 없습니다.\n정말 탈퇴 하시겠습니까?")) {
+      $.ajax({
+        url: '/api/groups/leave/' + [[${groupDetail.groupDto.id}]] ,
+        type: "DELETE",
+        success: function (res) {
           alert(res.result);
           location.href = "/groups";
         }, error: function (res) {

@@ -139,6 +139,16 @@ public class GroupService {
         return GroupDto.of(group);
     }
 
+    @Transactional
+    public void deleteGroupUser(Long groupId, String loginId) {
+        User loginUser = userService.findByLoginId(loginId);
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new AppException(ErrorCode.GROUP_NOT_FOUND));
+        UserGroup userGroup = userGroupService.findByUserAndGroup(loginUser, group);
+
+        userGroupService.deleteUserGroup(userGroup);
+    }
+
     public Boolean checkName(String name) {
         return !groupRepository.existsByName(name);
     }

@@ -11,6 +11,7 @@ import study.sns.domain.entity.Story;
 import study.sns.domain.entity.UploadImage;
 import study.sns.domain.entity.UserGroup;
 import study.sns.repository.UploadImageRepository;
+import study.sns.repository.UserGroupRepository;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -23,7 +24,7 @@ public class S3UploadService {
 
     private final AmazonS3 amazonS3;
     private final UploadImageRepository uploadImageRepository;
-    private final UserGroupService userGroupService;
+    private final UserGroupRepository userGroupRepository;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -51,17 +52,20 @@ public class S3UploadService {
     }
 
     public void deleteAllByGroup(Group group) {
-        List<UserGroup> userGroups = userGroupService.findByGroup(group);
+        List<UserGroup> userGroups = userGroupRepository.findByGroup(group);
         if (!userGroups.isEmpty()) {
             for (UserGroup userGroup : userGroups) {
-                if (userGroup.getStories() != null) {
-                    for (Story story : userGroup.getStories()) {
-                        if (story.getUploadImages() != null) {
-                            for (UploadImage uploadImage : story.getUploadImages()) {
-                                System.out.println(uploadImage.getOriginalFilename());
-                                amazonS3.deleteObject(bucket, uploadImage.getSavedFilename());
-                            }
-                        }
+                deleteAllByUserGroup(userGroup);
+            }
+        }
+    }
+
+    public void deleteAllByUserGroup(UserGroup userGroup) {
+        if (userGroup.getStories() != null) {
+            for (Story story : userGroup.getStories()) {
+                if (story.getUploadImages() != null) {
+                    for (UploadImage uploadImage : story.getUploadImages()) {
+                        amazonS3.deleteObject(bucket, uploadImage.getSavedFilename());
                     }
                 }
             }

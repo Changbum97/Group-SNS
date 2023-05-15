@@ -67,6 +67,13 @@ public class GroupApiController {
         return Response.success(groupService.editGroup(groupId, req, auth.getName()));
     }
 
+    @DeleteMapping("/leave/{groupId}")
+    @ApiOperation(value = "그룹 탈퇴")
+    public Response<String> groupUserDelete(@PathVariable Long groupId, @ApiIgnore Authentication auth) {
+        groupService.deleteGroupUser(groupId, auth.getName());
+        return Response.success("탈퇴 되었습니다.");
+    }
+
     @GetMapping("/check-name")
     @ApiOperation(value = "그룹명 중복 체크 통과", notes = "true: 중복 X, false: 중복 O")
     public Response<Boolean> checkName(@RequestParam String name) {
