@@ -28,7 +28,8 @@
       <br/>
       <div align="center">
         <button id="editBtn" class="btn user-btn" type="button" onclick="edit_group()">수정</button>
-        <button class="btn user-btn" type="button" onclick="location.href='/groups'" style="margin-left: 20px">취소</button>
+        <button class="btn user-btn" type="button"
+                th:onclick="|location.href='@{/groups/{groupId} (groupId=${groupId})}'|" style="margin-left: 20px">취소</button>
       </div>
     </form>
   </div>
@@ -50,10 +51,10 @@
       data: $('#groupRequest').serialize(),
       success: function () {
         alert('그룹이 수정되었습니다.')
-        location.href='/groups'
+        location.href='/groups/' + [[${groupId}]]
       }, error: function (res) {
         alert(res.responseJSON.result.message)
-        location.href='/groups'
+        location.href='/groups' + [[${groupId}]]
       }
     })
   }
