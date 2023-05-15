@@ -46,6 +46,21 @@ public class StoryService {
         UserGroup userGroup = userGroupRepository.findByUserAndGroup(user, group)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_GROUP_NOT_FOUND));
 
+        int storyCount = 0;
+        for (UserGroup tempUserGroup : group.getUserGroups()) {
+            for (Story story : tempUserGroup.getStories()) {
+                if (story.getDate().equals(req.getDate())) {
+                    storyCount ++;
+                }
+            }
+        }
+        if (storyCount >= group.getGroupRole().getMaxOnedayStory()) {
+            throw new AppException(ErrorCode.MAX_STORY);
+        }
+        if (images != null && images.size() >= group.getGroupRole().getMaxImage()) {
+            throw new AppException(ErrorCode.MAX_IMAGES);
+        }
+
         StoryScope scope;
         if (req.getScope().toUpperCase().equals("PUBLIC")) scope = StoryScope.PUBLIC;
         else if (req.getScope().toUpperCase().equals("PRIVATE")) scope = StoryScope.PRIVATE;

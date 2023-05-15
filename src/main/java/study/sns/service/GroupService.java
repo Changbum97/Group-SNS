@@ -37,7 +37,6 @@ public class GroupService {
             throw e;
         }
 
-
         if (loginUser.getUserGroups().size() >= loginUser.getUserRole().getMaxGroupJoin()) {
             throw new AppException(ErrorCode.MAX_GROUP);
         }
@@ -53,8 +52,13 @@ public class GroupService {
         User loginUser = userService.findByLoginId(loginId);
         Group group = findByName(req.getName());
 
+        // 로그인 한 유저가 가입할 수 있는 최대 그룹 수 체크
         if (loginUser.getUserGroups().size() >= loginUser.getUserRole().getMaxGroupJoin()) {
             throw new AppException(ErrorCode.MAX_GROUP);
+        }
+        // 그룹에서 유저를 더 받을 수 있는지 체크
+        if (group.getUserGroups().size() >= group.getGroupRole().getMaxGroupUsers()) {
+            throw new AppException(ErrorCode.MAX_USERS);
         }
 
         for (UserGroup userGroup : loginUser.getUserGroups()) {

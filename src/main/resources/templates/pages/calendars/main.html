@@ -19,6 +19,7 @@
                         <option th:each="group : ${groupList}" th:text="${group.name}" th:value="${group.name}"
                                 th:selected="${groupName == group.name}"></option>
                     </select>
+                    <span id="group-span"></span>
                 </div>
             </div>
         </div>
@@ -53,6 +54,7 @@
     window.onload = function () {
         groupName = [[${groupName}]]
         make_calendar()
+        document.getElementById('group-span').innerText = ' => 하루에 스토리 ' + find_max_stories(find_group_role(groupName)) + '개 작성 가능'
     }
 
     function make_calendar() {
@@ -168,6 +170,28 @@
     function change_group() {
         groupName = $("#groupName").val()
         location.href = '/calendars?year=' + [[${year}]] + "&month=" + [[${month}]] + "&groupName=" + groupName
+    }
+
+    function find_group_role(groupName) {
+        let groups = [[${groupList}]]
+        for (var i = 0 ; i < groups.length ; i ++) {
+            if (groups[i].name == groupName) {
+                return groups[i].groupRole
+            }
+        }
+    }
+
+    function find_max_stories(groupRole) {
+        if (groupRole == 'BRONZE') {
+            return 1
+        } else if(groupRole == 'SILVER') {
+            return 3
+        } else if (groupRole == 'GOLD') {
+            return 3
+        } else if (groupRole == 'DIAMOND') {
+            return 10
+        }
+        return 0
     }
 </script>
 </body>
