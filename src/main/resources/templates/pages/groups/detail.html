@@ -61,18 +61,26 @@
     }
   }
   function delete_group_user() {
-    if (confirm("그룹에서 탈퇴하면 작성한 스토리가 모두 삭제되고 복원할 수 없습니다.\n정말 탈퇴 하시겠습니까?")) {
-      $.ajax({
-        url: '/api/groups/leave/' + [[${groupDetail.groupDto.id}]] ,
-        type: "DELETE",
-        success: function (res) {
-          alert(res.result);
-          location.href = "/groups";
-        }, error: function (res) {
-          alert(res.responseJSON.result.message)
-          location.href='/groups'
-        }
-      });
+
+    // 1명일 때 탈퇴하면 그룹 삭제, 2명 이상일 때 탈퇴하면 탈퇴
+    if ([[${groupDetail.userGroupDtos.size()}]] == 1) {
+      if (confirm("그룹원이 1명이여서 탈퇴하면 그룹이 삭제됩니다.\n정말 탈퇴 하시겠습니까?")) {
+        delete_group();
+      }
+    } else {
+      if (confirm("그룹에서 탈퇴하면 작성한 스토리가 모두 삭제되고 복원할 수 없습니다.\n정말 탈퇴 하시겠습니까?")) {
+        $.ajax({
+          url: '/api/groups/leave/' + [[${groupDetail.groupDto.id}]] ,
+          type: "DELETE",
+          success: function (res) {
+            alert(res.result);
+            location.href = "/groups";
+          }, error: function (res) {
+            alert(res.responseJSON.result.message)
+            location.href='/groups'
+          }
+        });
+      }
     }
   }
 </script>
