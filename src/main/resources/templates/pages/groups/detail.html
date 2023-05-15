@@ -5,7 +5,16 @@
 <div class="row" style="height: 100%">
   <div th:replace="fragments/header.html :: side-bar" />
   <div class="col-9">
-    <br/> <h2>그룹 정보</h2> <br/>
+    <br/>
+    <div class="d-flex justify-content-between">
+      <h2>그룹 정보</h2>
+      <div>
+        <button class="btn story-btn"
+                th:onclick="|location.href='@{/groups/{groupId}/edit (groupId=${groupDetail.groupDto.id})}'|">수정</button>
+        <button class="btn story-btn" style="background-color: orangered" onclick="delete_group()">삭제</button>
+      </div>
+    </div>
+    <br/>
     <h3>그룹명 : [[${groupDetail.groupDto.name}]]</h3>
     <h3 th:if="${groupDetail.groupDto.groupRole.name == 'BRONZE'}">등급 : BRONZE<h5>(하루에 스토리 1개 작성 가능, 스토리에 이미지 5개 업로드 가능, 이 그룹에 최대 5명 참여 가능)</h5></h3>
     <h3 th:if="${groupDetail.groupDto.groupRole.name == 'SILVER'}">등급 : BRONZE<h5>(하루에 스토리 3개 작성 가능, 스토리에 이미지 5개 업로드 가능, 이 그룹에 최대 10명 참여 가능)</h5></h3>
@@ -20,7 +29,7 @@
       <thead style="background-color: #333333">
       <tr>
         <th style="width: 40%">닉네임</th>
-        <th style="width: 20%">등급</th>
+        <th style="width: 20%">유저 등급</th>
         <th style="width: 40%">그룹에 작성한 게시글 수</th>
       </tr>
       </thead>
@@ -34,5 +43,23 @@
     </table>
   </div>
 </div>
+<script th:inline="javascript">
+  function delete_group() {
+    if (confirm("그룹을 삭제하면 복원할 수 없습니다.\n정말 삭제 하시겠습니까?")) {
+      $.ajax({
+        url: '/api/groups/' + [[${groupDetail.groupDto.id}]] ,
+        type: "DELETE",
+        success: function (res) {
+          console.log(res)
+          alert(res.result);
+          location.href = "/groups";
+        }, error: function (res) {
+          alert(res.responseJSON.result.message)
+          location.href='/groups'
+        }
+      });
+    }
+  }
+</script>
 </body>
 </html>

@@ -51,10 +51,11 @@
 <script th:inline="javascript">
 
   window.onload = function () {
-    document.getElementById('date').value = new Date().toISOString().substring(0, 10)
+    let kr_curr = new Date((new Date()).getTime() + (1000 * 60 * 60 * 9))
+    document.getElementById('date').value = kr_curr.toISOString().substring(0, 10)
+
     let maxImages = find_max_images( find_group_role($("#groupName").val()) )
     document.getElementById('images-label').innerText = '사진 첨부(이미지 당 10MB 제한, 최대 ' + maxImages + '개)'
-
   }
 
   function add_story() {

@@ -51,6 +51,22 @@ public class GroupApiController {
         return Response.success(groupService.getGroupDetail(groupId, auth.getName()));
     }
 
+    @DeleteMapping("/{groupId}")
+    @ApiOperation(value = "그룹 삭제")
+    public Response<String> groupDelete(@PathVariable Long groupId, @ApiIgnore Authentication auth) {
+        groupService.deleteGroup(groupId, auth.getName());
+        return Response.success("그룹이 삭제되었습니다.");
+    }
+
+    @PutMapping("/{groupId}")
+    @ApiOperation(value = "그룹 수정")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "name", value = "그룹 이름, 2~15자 제한, 공백 불가"),
+            @ApiImplicitParam(name = "enterCode", value = "입장 코드, 5~20자 제한, 한글, 공백 불가")})
+    public Response<GroupDto> editGroup(@PathVariable Long groupId, GroupRequest req, @ApiIgnore Authentication auth) {
+        return Response.success(groupService.editGroup(groupId, req, auth.getName()));
+    }
+
     @GetMapping("/check-name")
     @ApiOperation(value = "그룹명 중복 체크 통과", notes = "true: 중복 X, false: 중복 O")
     public Response<Boolean> checkName(@RequestParam String name) {

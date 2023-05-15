@@ -16,7 +16,6 @@ import study.sns.domain.enum_class.StoryScope;
 import study.sns.domain.exception.AppException;
 import study.sns.domain.exception.ErrorCode;
 import study.sns.repository.StoryRepository;
-import study.sns.repository.UserGroupRepository;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -32,7 +31,7 @@ public class StoryService {
     private final StoryRepository storyRepository;
     private final UserService userService;
     private final GroupService groupService;
-    private final UserGroupRepository userGroupRepository;
+    private final UserGroupService userGroupService;
     private final S3UploadService s3UploadService;
     private final AmazonS3 amazonS3;
 
@@ -43,8 +42,7 @@ public class StoryService {
     public StoryDto addStory(String loginId, StoryAddRequest req, List<MultipartFile> images) {
         User user = userService.findByLoginId(loginId);
         Group group = groupService.findByName(req.getGroupName());
-        UserGroup userGroup = userGroupRepository.findByUserAndGroup(user, group)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_GROUP_NOT_FOUND));
+        UserGroup userGroup = userGroupService.findByUserAndGroup(user, group);
 
         int storyCount = 0;
         for (UserGroup tempUserGroup : group.getUserGroups()) {
@@ -57,7 +55,7 @@ public class StoryService {
         if (storyCount >= group.getGroupRole().getMaxOnedayStory()) {
             throw new AppException(ErrorCode.MAX_STORY);
         }
-        if (images != null && images.size() >= group.getGroupRole().getMaxImage()) {
+        if (images != null && images.size() > group.getGroupRole().getMaxImage()) {
             throw new AppException(ErrorCode.MAX_IMAGES);
         }
 
@@ -94,8 +92,7 @@ public class StoryService {
     public List<StoryDto> getStoryList(String loginId, StoryListRequest req) {
         User user = userService.findByLoginId(loginId);
         Group group = groupService.findByName(req.getGroupName());
-        userGroupRepository.findByUserAndGroup(user, group)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_GROUP_NOT_FOUND));
+        userGroupService.findByUserAndGroup(user, group);
 
         List<StoryDto> result = new ArrayList<>();
         for (UserGroup userGroup : group.getUserGroups()) {
@@ -120,9 +117,7 @@ public class StoryService {
 
         // 로그인한 유저가 스토리에 접근할 수 있는지 확인
         Group storyGroup = story.getUserGroup().getGroup();
-        if (!userGroupRepository.existsByUserAndGroup(loginUser, storyGroup)) {
-            throw new AppException(ErrorCode.INVALID_PERMISSION);
-        }
+        userGroupService.findByUserAndGroup(loginUser, storyGroup);
 
         return StoryDto.of(story, amazonS3, bucket);
     }

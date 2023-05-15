@@ -1,7 +1,10 @@
 package study.sns.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import springfox.documentation.annotations.ApiIgnore;
+import study.sns.domain.Response;
 import study.sns.domain.dto.group.GroupDetailResponse;
 import study.sns.domain.dto.group.GroupRequest;
 import study.sns.domain.dto.group.GroupDto;
@@ -11,7 +14,6 @@ import study.sns.domain.entity.UserGroup;
 import study.sns.domain.exception.AppException;
 import study.sns.domain.exception.ErrorCode;
 import study.sns.repository.GroupRepository;
-import study.sns.repository.UserGroupRepository;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -22,8 +24,10 @@ import java.util.List;
 public class GroupService {
 
     private final GroupRepository groupRepository;
-    private final UserGroupRepository userGroupRepository;
     private final UserService userService;
+    private final S3UploadService s3UploadService;
+    private final UserGroupService userGroupService;
+
 
     @Transactional
     public GroupDto addGroup(GroupRequest req, String loginId) {
@@ -42,7 +46,7 @@ public class GroupService {
         }
 
         Group savedGroup = groupRepository.save( req.toEntity() );
-        UserGroup savedUserGroup = userGroupRepository.save( new UserGroup(loginUser, savedGroup) );
+        UserGroup savedUserGroup = userGroupService.save( loginUser, savedGroup );
         savedGroup.addUser(savedUserGroup);
         return GroupDto.of(savedGroup);
     }
@@ -71,7 +75,7 @@ public class GroupService {
             throw new AppException(ErrorCode.WRONG_PASSWORD, "입장 코드가 일치하지 않습니다.");
         }
 
-        UserGroup savedUserGroup = userGroupRepository.save( new UserGroup(loginUser, group) );
+        UserGroup savedUserGroup = userGroupService.save(loginUser, group);
         group.addUser(savedUserGroup);
         return GroupDto.of(group);
     }
@@ -99,10 +103,40 @@ public class GroupService {
         }
         // 로그인한 유저가 그룹원이 아니라면 에러 발생
         if (check == false) {
-            throw new AppException(ErrorCode.INVALID_PERMISSION);
+            throw new AppException(ErrorCode.USER_GROUP_NOT_FOUND);
         }
 
         return GroupDetailResponse.of(group);
+    }
+
+    @Transactional
+    public void deleteGroup(Long groupId, String loginId) {
+        User loginUser = userService.findByLoginId(loginId);
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new AppException(ErrorCode.GROUP_NOT_FOUND));
+        userGroupService.findByUserAndGroup(loginUser, group);
+
+        s3UploadService.deleteAllByGroup(group);
+        groupRepository.delete(group);
+    }
+
+    @Transactional
+    public GroupDto editGroup(Long groupId, GroupRequest req, String loginId) {
+        Group group = null;
+
+        try {
+            User loginUser = userService.findByLoginId(loginId);
+            group = findById(groupId);
+            groupRequestCheck(req);
+            userGroupService.findByUserAndGroup(loginUser, group);
+        } catch (AppException e) {
+            if (!e.getErrorCode().equals(ErrorCode.DUPLICATED_GROUP_NAME) || !req.getName().equals(group.getName())) {
+                throw e;
+            }
+        }
+
+        group.edit(req.getName(), req.getEnterCode());
+        return GroupDto.of(group);
     }
 
     public Boolean checkName(String name) {
@@ -124,6 +158,11 @@ public class GroupService {
 
     public Group findByName(String name) {
         return groupRepository.findByName(name)
+                .orElseThrow(() -> new AppException(ErrorCode.GROUP_NOT_FOUND));
+    }
+
+    public Group findById(Long groupId) {
+        return groupRepository.findById(groupId)
                 .orElseThrow(() -> new AppException(ErrorCode.GROUP_NOT_FOUND));
     }
 }

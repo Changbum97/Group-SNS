@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko"  xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"/>
+<body>
+<div class="row" style="height: 100%">
+  <div th:replace="fragments/header.html :: side-bar" />
+  <div class="col-10" style="display: flex; justify-content: center; align-items: center;">
+    <form class="form-group user-form" th:object="${groupRequest}" id="groupRequest" align="left">
+      <div align="center">
+        <h1>그룹 수정</h1>
+        <hr/> <br/>
+      </div>
+      <div>
+        <label th:for="name">그룹명</label><br/>
+        <input type="text" th:field="*{name}" id="name" oninput="check_name()"
+               placeholder="그룹명을 입력해주세요."/>
+        <div id="namePass" class="user-div-pass" hidden>사용 가능한 그룹명입니다.</div>
+        <div id="nameFail" class="user-div-fail" hidden></div>
+      </div>
+      <br/>
+      <div>
+        <label th:for="enterCode">입장 코드</label><br/>
+        <input type="text" th:field="*{enterCode}" id="enterCode" oninput="check_enterCode()"
+               placeholder="입장 코드는 그룹 참여에 필요합니다."/>
+        <div id="enterCodePass" class="user-div-pass" hidden>사용 가능한 입장 코드입니다.</div>
+        <div id="enterCodeFail" class="user-div-fail" hidden></div>
+      </div>
+      <br/>
+      <div align="center">
+        <button id="editBtn" class="btn user-btn" type="button" onclick="edit_group()">수정</button>
+        <button class="btn user-btn" type="button" onclick="location.href='/groups'" style="margin-left: 20px">취소</button>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+
+<script th:inline="javascript">
+  let namePass = true, enterCodePass = true
+  let originalGroupName
+
+  window.onload = function () {
+    originalGroupName = document.getElementById('name').value
+  }
+
+  function edit_group() {
+    $.ajax({
+      type: 'PUT',
+      url: '/api/groups/' + [[${groupId}]],
+      data: $('#groupRequest').serialize(),
+      success: function () {
+        alert('그룹이 수정되었습니다.')
+        location.href='/groups'
+      }, error: function (res) {
+        alert(res.responseJSON.result.message)
+        location.href='/groups'
+      }
+    })
+  }
+
+  function check_all() {
+    if (namePass && enterCodePass) {
+      document.getElementById('editBtn').removeAttribute("disabled")
+    }
+  }
+
+  function check_name() {
+    let inputName = $("#name").val()
+    namePass = false
+
+    document.getElementById('editBtn').setAttribute("disabled", "true")
+
+    // 공백 체크
+    if (inputName.search(/\s/) !== -1) {
+      document.getElementById('nameFail').removeAttribute("hidden")
+      document.getElementById('nameFail').innerText = "그룹명에는 공백이 포함될 수 없습니다."
+      document.getElementById('namePass').setAttribute("hidden", "true")
+      return
+    }
+
+    // 글자수 체크
+    if (inputName.length < 2) {
+      document.getElementById('nameFail').removeAttribute("hidden")
+      document.getElementById('nameFail').innerText = "그룹명은 2글자 이상만 가능합니다."
+      document.getElementById('namePass').setAttribute("hidden", "true")
+      return
+    } else if (inputName.length > 15) {
+      document.getElementById('nameFail').removeAttribute("hidden")
+      document.getElementById('nameFail').innerText = "그룹명은 15글자 이하만 가능합니다."
+      document.getElementById('namePass').setAttribute("hidden", "true")
+      return
+    }
+
+    if (inputName == originalGroupName) {
+      document.getElementById('namePass').removeAttribute("hidden")
+      document.getElementById('nameFail').setAttribute("hidden", "true")
+      namePass = true
+      check_all()
+    } else {
+
+      $.ajax({
+        type: 'GET',
+        url: '/api/groups/check-name',
+        data: {
+          name: inputName
+        },
+        success: function (res) {
+          if (res.result == true) {
+            document.getElementById('namePass').removeAttribute("hidden")
+            document.getElementById('nameFail').setAttribute("hidden", "true")
+            namePass = true
+            check_all()
+          } else {
+
+            document.getElementById('nameFail').removeAttribute("hidden")
+            document.getElementById('nameFail').innerText = "그룹명이 중복됩니다."
+            document.getElementById('namePass').setAttribute("hidden", "true")
+          }
+        }
+      })
+    }
+  }
+
+  function check_enterCode() {
+    let inputEnterCode = $("#enterCode").val()
+    enterCodePass = false
+
+    document.getElementById('editBtn').setAttribute("disabled", "true")
+
+    // 한글, 공백 체크
+    if (/[ㄱ-ㅎㅏ-ㅣ가-힣]/g.test(inputEnterCode)) {
+      document.getElementById('enterCodeFail').removeAttribute("hidden")
+      document.getElementById('enterCodeFail').innerText = "입장 코드에는 한글이 포함될 수 없습니다."
+      document.getElementById('enterCodePass').setAttribute("hidden", "true")
+      return
+    } else if (inputEnterCode.search(/\s/) !== -1) {
+      document.getElementById('enterCodeFail').removeAttribute("hidden")
+      document.getElementById('enterCodeFail').innerText = "입장 코드에는 공백이 포함될 수 없습니다."
+      document.getElementById('enterCodePass').setAttribute("hidden", "true")
+      return
+    }
+
+    // 글자수 체크
+    if (inputEnterCode.length < 5) {
+      document.getElementById('enterCodeFail').removeAttribute("hidden")
+      document.getElementById('enterCodeFail').innerText = "입장 코드는 5글자 이상만 가능합니다."
+      document.getElementById('enterCodePass').setAttribute("hidden", "true")
+      return
+    } else if (inputEnterCode.length > 20) {
+      document.getElementById('enterCodeFail').removeAttribute("hidden")
+      document.getElementById('enterCodeFail').innerText = "입장 코드는 20글자 이하만 가능합니다."
+      document.getElementById('enterCodePass').setAttribute("hidden", "true")
+      return
+    }
+
+    document.getElementById('enterCodePass').removeAttribute("hidden")
+    document.getElementById('enterCodeFail').setAttribute("hidden", "true")
+    enterCodePass = true
+    check_all()
+  }
+</script>
+
+</html>

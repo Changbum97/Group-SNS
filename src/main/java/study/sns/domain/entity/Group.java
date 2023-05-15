@@ -21,7 +21,7 @@ public class Group extends BaseEntity {
     private String name;
     private String enterCode;
 
-    @OneToMany(mappedBy = "group")
+    @OneToMany(mappedBy = "group", orphanRemoval = true)
     private List<UserGroup> userGroups;
 
     @Enumerated(EnumType.STRING)
@@ -31,5 +31,8 @@ public class Group extends BaseEntity {
         userGroups.add(userGroup);
     }
 
-
+    public void edit(String newName, String newEnterCode) {
+        this.name = newName;
+        this.enterCode = newEnterCode;
+    }
 }

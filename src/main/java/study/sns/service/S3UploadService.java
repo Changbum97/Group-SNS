@@ -6,12 +6,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import study.sns.domain.entity.Group;
 import study.sns.domain.entity.Story;
 import study.sns.domain.entity.UploadImage;
+import study.sns.domain.entity.UserGroup;
 import study.sns.repository.UploadImageRepository;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -20,6 +23,7 @@ public class S3UploadService {
 
     private final AmazonS3 amazonS3;
     private final UploadImageRepository uploadImageRepository;
+    private final UserGroupService userGroupService;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -44,6 +48,24 @@ public class S3UploadService {
                 .savedFilename(savedFilename)
                 .story(story)
                 .build());
+    }
+
+    public void deleteAllByGroup(Group group) {
+        List<UserGroup> userGroups = userGroupService.findByGroup(group);
+        if (!userGroups.isEmpty()) {
+            for (UserGroup userGroup : userGroups) {
+                if (userGroup.getStories() != null) {
+                    for (Story story : userGroup.getStories()) {
+                        if (story.getUploadImages() != null) {
+                            for (UploadImage uploadImage : story.getUploadImages()) {
+                                System.out.println(uploadImage.getOriginalFilename());
+                                amazonS3.deleteObject(bucket, uploadImage.getSavedFilename());
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // 확장자 추출
