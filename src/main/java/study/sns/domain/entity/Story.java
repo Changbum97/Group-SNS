@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import study.sns.domain.dto.story.StoryEditRequest;
 import study.sns.domain.enum_class.StoryScope;
 
 import javax.persistence.*;
@@ -33,4 +34,12 @@ public class Story {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_group_id")
     private UserGroup userGroup;
+
+    public void update(String newTitle, String newBody, LocalDate newDate, StoryScope newScope) {
+        this.title = newTitle;
+        this.body = newBody;
+        this.date = newDate;
+        this.scope = newScope;
+    }
+
 }

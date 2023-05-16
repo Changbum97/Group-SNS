@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko"  xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"/>
+<body>
+<div class="row" style="height: 100%">
+  <div th:replace="fragments/header.html :: side-bar" />
+  <div class="offset-1 col-6">
+    <br/><br/>
+    <form class="form-group story-form" th:object="${storyEditRequest}" id="storyEditRequest" align="left">
+      <h1>스토리 수정</h1><hr/>
+      <div>
+        <label>그룹 : [[${groupName}]]</label>
+      </div>
+      <br/>
+      <div>
+        <label th:for="date">날짜</label>
+        <input type="date" th:field="*{date}" />
+      </div>
+      <div>
+        <label th:for="title">제목</label><br/>
+        <input type="text" th:field="*{title}" style="width: 300px"/>
+      </div>
+      <br/>
+      <div>
+        <label th:for="body">내용</label><br/>
+        <textarea rows="3" style="width: 500px;" th:field="*{body}"/>
+      </div>
+      <br/>
+      <div>
+        <label th:for="images" id="images-label"></label><br/>
+        <input type="file" id="images" multiple="multiple"/>
+      </div>
+      <br/>
+      <div>
+        <input type="radio" name="scope" value="PUBLIC" th:checked="${storyEditRequest.scope == 'PUBLIC'}"><label>공개</label>
+        <input type="radio" name="scope" value="PRIVATE" style="margin-left: 10px"
+               th:checked="${storyEditRequest.scope == 'PRIVATE'}"><label>비공개</label>
+      </div>
+      <br/><br/>
+      <div align="center">
+        <button id="addBtn" class="btn story-form-btn" type="button" onclick="edit_story()">수정</button>
+        <button class="btn story-form-btn" type="button" style="margin-left: 20px"
+                th:onclick="|location.href='@{/stories/{storyId} (storyId=${storyId})}'|">취소</button>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+
+<script th:inline="javascript">
+
+  window.onload = function () {
+    document.getElementById('date').value = [[${storyEditRequest.date}]]
+
+    let maxImages = [[${maxImages}]]
+    document.getElementById('images-label').innerText =
+            '(파일을 선택하지 않으면 기존의 이미지가 수정되지 않습니다.)\n' +
+            '사진 첨부(이미지 당 10MB 제한, 최대 ' + maxImages + '개)'
+  }
+
+  function edit_story() {
+
+    let storyEditRequest = {
+      title : $("#title").val(),
+      body : $("#body").val(),
+      scope : $("input[name='scope']:checked").val(),
+      date: $("#date").val()
+    }
+
+    let formData = new FormData()
+    for (var i = 0; i < document.getElementById('images').files.length; i++) {
+      formData.append("images", document.getElementById('images').files[i]);
+    }
+    formData.append("storyEditRequest", new Blob([JSON.stringify(storyEditRequest)], {type: "application/json"}));
+
+    $.ajax({
+      type: 'PUT',
+      url: '/api/stories/' + [[${storyId}]],
+      enctype: 'multipart/form-data',
+      data: formData,
+      contentType: false,
+      processData: false,
+      cache: false,
+      success: function (res) {
+        alert('스토리가 수정되었습니다.')
+        location.href='/stories/' + res.result.id
+      }, error: function (res) {
+        alert(res.responseJSON.result.message)
+      }
+    })
+  }
+
+  function change_group() {
+    let maxImages = find_max_images( find_group_role($("#groupName").val()) )
+    document.getElementById('images-label').innerText = '사진 첨부(이미지 당 10MB 제한, 최대 ' + maxImages + '개)'
+    if ($("#images")[0].files.length > maxImages) {
+      alert('이미지는 최대 ' + maxImages + '개 업로드 가능합니다.')
+      delete_images()
+    }
+  }
+
+  $("#images").on("change", (e) => {
+    let totalFiles = e.target.files.length
+    let maxImages = find_max_images( find_group_role($("#groupName").val()) )
+
+    if (totalFiles > maxImages) {
+      alert('이미지는 최대 ' + maxImages + '개 업로드 가능합니다.')
+      delete_images()
+      return
+    }
+
+    // 확장자 체크
+    const acceptType = ['gif','png','jpg','jpeg', 'bmp']
+
+    for (var i = 0 ; i < totalFiles ; i ++) {
+
+      let image = e.target.files[i]
+      let ext = image.name.substr(image.name.lastIndexOf('.') + 1).toLowerCase()
+      if (acceptType.indexOf(ext) == -1) {
+        alert('이미지만 업로드 가능합니다.')
+        delete_images()
+        return
+      }
+
+      // 최대 용량 10MB 초과
+      if (image.size > 10 * 1024 * 1024) {
+        alert("이미지 하나의 최대 크기는 10MB입니다.")
+        delete_images()
+        return;
+      }
+    }
+  })
+
+  function delete_images() {
+    let agent = navigator.userAgent.toLowerCase();
+
+    // 브라우저가 IE인 경우
+    if ( (navigator.appName == 'Netscape' && navigator.userAgent.search('Trident') != -1) || (agent.indexOf("msie") != -1) ){
+      $("#uploadImage").replaceWith( $("#iamges").clone(true) );
+    } else {
+      $("#images").val("");
+    }
+  }
+
+</script>
+
+</html>

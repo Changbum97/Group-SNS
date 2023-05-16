@@ -44,7 +44,8 @@ public class S3UploadService {
         // S3에 파일 업로드
         amazonS3.putObject(bucket, savedFilename, multipartFile.getInputStream(), metadata);
 
-        return uploadImageRepository.save(UploadImage.builder()
+        return uploadImageRepository.save(
+                UploadImage.builder()
                 .originalFilename(originalFilename)
                 .savedFilename(savedFilename)
                 .story(story)
@@ -63,11 +64,15 @@ public class S3UploadService {
     public void deleteAllByUserGroup(UserGroup userGroup) {
         if (userGroup.getStories() != null) {
             for (Story story : userGroup.getStories()) {
-                if (story.getUploadImages() != null) {
-                    for (UploadImage uploadImage : story.getUploadImages()) {
-                        amazonS3.deleteObject(bucket, uploadImage.getSavedFilename());
-                    }
-                }
+                deleteByStory(story);
+            }
+        }
+    }
+
+    public void deleteByStory(Story story) {
+        if (story.getUploadImages() != null) {
+            for (UploadImage uploadImage : story.getUploadImages()) {
+                amazonS3.deleteObject(bucket, uploadImage.getSavedFilename());
             }
         }
     }
