@@ -25,6 +25,7 @@ public class CalendarController {
     public String calendarMainPage(@RequestParam(required = false) Integer year,
                                    @RequestParam(required = false) Integer month,
                                    @RequestParam(required = false) String groupName,
+                                   @RequestParam(required = false, defaultValue = "calendar") String type,
                                    Model model, Authentication auth) {
         if (year == null || month == null) {
             LocalDateTime now = LocalDateTime.now();
@@ -49,6 +50,9 @@ public class CalendarController {
         } else {
             model.addAttribute("groupName", groupName);
         }
+
+        model.addAttribute("type", type);
+
         return "pages/calendars/main";
     }
 }

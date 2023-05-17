@@ -64,4 +64,11 @@ public class StoryController {
                                         storyDto.getScope().name(), storyDto.getDate()));
         return "pages/stories/edit";
     }
+
+    @GetMapping("")
+    public String storyAllListPage(Model model, Authentication auth) {
+        model.addAttribute("others", storyService.getOtherStory(auth.getName()));
+
+        return "pages/stories/list";
+    }
 }

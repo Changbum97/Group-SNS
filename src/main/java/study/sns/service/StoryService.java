@@ -110,6 +110,29 @@ public class StoryService {
         return result;
     }
 
+    public List<StoryDto> getOtherStory(String loginId) {
+        User user = userService.findByLoginId(loginId);
+        List<Story> allStory = storyRepository.findAll();
+        List<StoryDto> result = new ArrayList<>();
+
+        for (Story story : allStory) {
+            if (story.getScope() == StoryScope.PRIVATE) continue;
+
+            Group group = story.getUserGroup().getGroup();
+            try {
+                userGroupService.findByUserAndGroup(user, group);
+            } catch (AppException e) {
+                // 본인이 속한 그룹의 스토리가 아닌 경우
+                if (e.getErrorCode().equals(ErrorCode.USER_GROUP_NOT_FOUND)) {
+                    result.add(StoryDto.of(story, amazonS3, bucket));
+                }
+            }
+        }
+
+        Collections.sort(result);
+        return result;
+    }
+
     public StoryDto getStory(String loginId, Long storyId) {
         User loginUser = userService.findByLoginId(loginId);
         Story story = storyRepository.findById(storyId)

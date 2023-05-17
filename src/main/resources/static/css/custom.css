@@ -312,6 +312,30 @@ html, body {
     filter: brightness(70%);
 }
 
+.slide-show-container {
+    max-width: 100%;
+}
+
+.slide {
+    display: none;
+    width: 100%;
+}
+
+.prev, .next {
+    border: none;
+    background-color: #333333;;
+    color: whitesmoke;
+    font-weight: bolder;
+}
+
+.prev {
+    left: 10px;
+}
+
+.next {
+    right: 10px;
+}
+
 @keyframes jelly {
     25% {
         transform: scale(0.9, 1.1);

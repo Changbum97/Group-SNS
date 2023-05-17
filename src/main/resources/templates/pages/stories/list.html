@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head th:replace="fragments/header.html :: head"/>
+<body>
+
+<div class="row" style="height: 100%">
+    <div th:replace="fragments/header.html :: side-bar" />
+    <div class="col-9" style="margin-left: 30px">
+        <br/><br/>
+        <div th:each="story : ${others}" align="center">
+            <br/>
+            <div class="card" style="padding: 20px; width: 60%;">
+                <div class="row">
+                    <div class="col-4 slide-show-container">
+                        <div th:if="${story.uploadImagesUrl.size() != 0}">
+                            <div class="slide-show">
+                                <button class="prev" onclick="change_slide(this, -1)">&lang;</button>
+                                <span>1/[[${story.uploadImagesUrl.size}]]</span>
+                                <button class="next" onclick="change_slide(this, 1)">&rang;</button>
+                                <img th:each="uploadImageUrl : ${story.uploadImagesUrl}" class="slide"
+                                     th:src="${uploadImageUrl}" style="width: 100%; height: auto; aspect-ratio: 1/1; border: solid 1px black;"/>
+                            </div>
+                        </div>
+                        <div th:unless="${story.uploadImagesUrl.size() != 0}">
+                            <img alt="이미지 없음" style="width: 100%; height: auto; aspect-ratio: 1/1; border: solid 1px black;"/>
+                        </div>
+                    </div>
+                    <div class="col-8 card-body" style="text-align: left; padding-left: 30px">
+                        <h3 class="card-title" style="overflow:hidden; text-overflow: ellipsis; white-space: nowrap">
+                            [ [[${story.groupName}]] ] [[${story.title}]]</h3>
+                        <h6 class="card-text">[[${story.date}]]</h6><br/>
+                        <h6 class="card-text">[[${story.body}]]</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    window.onload = function () {
+        const slideshowContainers = document.getElementsByClassName('slide-show-container');
+        Array.from(slideshowContainers).forEach((container) => {
+            if (container.getElementsByTagName('button').length != 0) {
+                show_slide(container.getElementsByTagName('button')[0], 0)
+            }
+        });
+    }
+
+    function show_slide(button, n) {
+        const slideshow = button.parentNode.parentNode;
+        const slides = slideshow.getElementsByClassName('slide');
+        const currentIndex = Array.from(slides).findIndex(slide => slide.style.display !== 'none');
+        let slideIndex = (currentIndex + n) % slides.length;
+
+        if (slideIndex < 0) {
+            slideIndex = slides.length - 1;
+        }
+
+        for (let i = 0; i < slides.length; i++) {
+            slides[i].style.display = 'none';
+        }
+
+        slides[slideIndex].style.display = 'block';
+
+        const span = button.parentNode.querySelector('span');
+        span.innerText = (slideIndex + 1) + '/' + span.innerText.toString().split('/')[1]
+    }
+
+    function change_slide(button, n) {
+        show_slide(button, n);
+    }
+</script>
+</body>
+</html>

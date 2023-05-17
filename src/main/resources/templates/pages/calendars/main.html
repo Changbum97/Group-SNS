@@ -2,6 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head th:replace="fragments/header.html :: head"/>
 <body>
+
 <div class="row" style="height: 100%">
     <div th:replace="fragments/header.html :: side-bar" />
     <div class="col-9" style="margin-left: 30px">
@@ -25,51 +26,57 @@
         </div>
         <div class="d-flex justify-content-between" style="height: 50px">
             <div style="display: flex; justify-content: center; align-items: center">
-                <label><input type="radio" name="calendar-type" value="calendar" checked><span>&nbsp;달력형</span></label>&nbsp;&nbsp;
-                <label><input type="radio" name="calendar-type" value="line"><span>&nbsp;열거형</span></label>
+                <label><input type="radio" name="calendar-type" value="calendar" th:checked="${type == 'calendar'}"><span>&nbsp;달력형</span></label>&nbsp;&nbsp;
+                <label><input type="radio" name="calendar-type" value="list" th:checked="${type == 'list'}"><span>&nbsp;열거형</span></label>
             </div>
             <button class="btn story-btn" type="button" onclick="location.href='/stories/add?group=' + groupName">스토리 추가</button>
         </div>
-        <table class="table calendar-table">
-            <thead style="background-color: #333333">
-                <tr>
-                    <th style="color: red">일</th>
-                    <th>월</th>
-                    <th>화</th>
-                    <th>수</th>
-                    <th>목</th>
-                    <th>금</th>
-                    <th style="color: red">토</th>
-                </tr>
-            </thead>
-            <tbody id="calendar-body">
-            </tbody>
-        </table>
+        <div id="content-div" align="center"></div>
     </div>
 </div>
 <script th:inline="javascript">
 
-    let groupName
+    let groupName, type
 
     window.onload = function () {
         groupName = [[${groupName}]]
-        make_calendar()
+
+        let year = [[${year}]]
+        let month = [[${month}]]
+        document.getElementById('year-month').innerText = year + " " + month.toString().padStart(2, '0')
+        type = [[${type}]]
+        if (type == 'calendar') {
+            make_calendar()
+        } else {
+            make_list()
+        }
         document.getElementById('group-span').innerText = ' => 하루에 스토리 ' + find_max_stories(find_group_role(groupName)) + '개 작성 가능'
     }
 
     function make_calendar() {
 
         let nowDate = new Date()
-
         let year = [[${year}]]
-        let month = [[${month}]]
-        document.getElementById('year-month').innerText = year + " " + month.toString().padStart(2, '0')
-        month --;
+        let month = [[${month}]] - 1
 
         let firstDate = new Date(year, month, 1);
         let lastDate = new Date(year, month + 1, 0);
 
-        let html = "<tr>"
+        let html =
+            "<table class='table calendar-table'>" +
+                "<thead style='background-color: #333333'>" +
+                    "<tr>" +
+                        "<th style=\"color: red\">일</th>" +
+                        "<th>월</th>" +
+                        "<th>화</th>" +
+                        "<th>수</th>" +
+                        "<th>목</th>" +
+                        "<th>금</th>" +
+                        "<th style=\"color: red\">토</th>" +
+                    "</tr>" +
+                "</thead>" +
+                "<tbody><tr>";
+
         for (let i = 1 ; i <= firstDate.getDay() % 7 ; i ++) {
             html +="<td></td>"
         }
@@ -93,10 +100,100 @@
                 }
             }
         }
-        html += "</tr>"
-        $('#calendar-body').append(html)
-
+        html += "</tr></tbody></table>"
+        $('#content-div').append(html)
         get_story_list()
+    }
+
+    function make_list() {
+        let storyList;
+
+        $.ajax({
+            type: 'GET',
+            url: '/api/stories/list',
+            data: {
+                groupName: groupName,
+                year: [[${year}]],
+                month: [[${month}]]
+            },
+            success: function (res) {
+                storyList = res.result
+            }, error: function (res) {
+                alert(res.responseJSON.result.message)
+                location.href='/calendars'
+            }
+        }).done( function () {
+            let html = "<hr/><br/>"
+
+            for (var i = 0 ; i < storyList.length ; i ++) {
+                let id = storyList[i].id.toString()
+                let title = storyList[i].title.toString()
+                let body = storyList[i].body.toString()
+                let scope = storyList[i].scope.toString()
+                let date = storyList[i].date.toString()
+                let uploadImagesUrl = storyList[i].uploadImagesUrl
+
+                html += "<div class='card' style='padding: 20px; width: 60%'><div class='row'>"
+                html += "<div class='col-4 slide-show-container'>"
+                if (uploadImagesUrl.length != 0) {
+                    html += "<div class='slide-show'>"
+                    html += "<button class='prev' onclick='change_slide(this, -1)'>&lang;</button>"
+                    html += "<span>1/" + uploadImagesUrl.length + "</span>"
+                    html += "<button class='next' onclick='change_slide(this, 1)'>&rang;</button>"
+                    for (var j = 0 ; j < uploadImagesUrl.length ; j ++) {
+                        html += "<img class='slide' src='" + uploadImagesUrl[j] + "' style='width: 100%; height: auto; aspect-ratio: 1/1; border: solid 1px black;'/>"
+                    }
+                    html += "</div>"
+                } else {
+                    html += "<img alt='이미지 없음' style='width: 100%; height: auto; aspect-ratio: 1/1; border: solid 1px black;'/>"
+                }
+                html += "</div>"
+
+                html += "<div class='col-8 card-body' style='text-align: left; padding-left: 30px' onclick=\"location.href='/stories/" + id + "'\"'>"
+                if (scope == 'PUBLIC') {
+                    html += "<h3 class='card-title' style='overflow: hidden; text-overflow: ellipsis; " +
+                        "white-space: nowrap'>" + title + "</h3>"
+                } else {
+                    html += "<h3 class='card-title' style='overflow: hidden; text-overflow: ellipsis; " +
+                        "white-space: nowrap'><i class='bi bi-lock-fill'></i>&nbsp;&nbsp;" + title + "</h3>"
+                }
+                html += "<h6 class='card-text'>" + date + "</h6><br/>"
+                html += "<h6 class='card-text'>" + body + "</h6>"
+                html += "</div></div></div><br/>"
+            }
+            $('#content-div').append(html)
+
+            const slideshowContainers = document.getElementsByClassName('slide-show-container');
+            Array.from(slideshowContainers).forEach((container) => {
+                if (container.getElementsByTagName('button').length != 0) {
+                    show_slide(container.getElementsByTagName('button')[0], 0)
+                }
+            });
+        })
+    }
+
+    function show_slide(button, n) {
+        const slideshow = button.parentNode.parentNode;
+        const slides = slideshow.getElementsByClassName('slide');
+        const currentIndex = Array.from(slides).findIndex(slide => slide.style.display !== 'none');
+        let slideIndex = (currentIndex + n) % slides.length;
+
+        if (slideIndex < 0) {
+            slideIndex = slides.length - 1;
+        }
+
+        for (let i = 0; i < slides.length; i++) {
+            slides[i].style.display = 'none';
+        }
+
+        slides[slideIndex].style.display = 'block';
+
+        const span = button.parentNode.querySelector('span');
+        span.innerText = (slideIndex + 1) + '/' + span.innerText.toString().split('/')[1]
+    }
+
+    function change_slide(button, n) {
+        show_slide(button, n);
     }
 
     function get_story_list() {
@@ -164,12 +261,14 @@
                 }
             }
         }
-        location.href = '/calendars?year=' + year + "&month=" + month + "&groupName=" + groupName
+        location.href = '/calendars?year=' + year + "&month=" + month +
+                         "&groupName=" + groupName + "&type=" + type
     }
 
     function change_group() {
         groupName = $("#groupName").val()
-        location.href = '/calendars?year=' + [[${year}]] + "&month=" + [[${month}]] + "&groupName=" + groupName
+        location.href = '/calendars?year=' + [[${year}]] + "&month=" + [[${month}]] +
+                        "&groupName=" + groupName + "&type=" + type
     }
 
     function find_group_role(groupName) {
@@ -193,6 +292,11 @@
         }
         return 0
     }
+
+    $('input[name="calendar-type"]').on("change", (e) => {
+        location.href = '/calendars?year=' + [[${year}]] + "&month=" + [[${month}]] +
+                        "&groupName=" + groupName + "&type=" + e.target.value
+    })
 </script>
 </body>
 </html>
