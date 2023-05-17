@@ -16,7 +16,7 @@ public class MakeInitData {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
 
-    @PostConstruct
+    //@PostConstruct
     public void makeUser() {
         User admin = User.builder()
                 .loginId("admin")
