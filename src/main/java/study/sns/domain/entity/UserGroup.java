@@ -1,8 +1,6 @@
 package study.sns.domain.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import study.sns.domain.BaseEntity;
 
 import javax.persistence.*;
@@ -10,8 +8,9 @@ import java.util.List;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor
-@ToString
+@AllArgsConstructor
 public class UserGroup extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
