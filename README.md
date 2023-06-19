@@ -2,8 +2,7 @@
 
 ## 결과
 
-[배포 사이트](http://ec2-52-79-82-151.ap-northeast-2.compute.amazonaws.com:8085/)
-[Swagger Docs](http://ec2-52-79-82-151.ap-northeast-2.compute.amazonaws.com:8085/swagger-ui/)
+- 잠시 배포 중단
 
 ## ERD
 
